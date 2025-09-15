@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Star, Trophy, Heart } from "lucide-react";
 import { CandyCountGame } from "./CandyCountGame";
 import ClockGame from "./ClockGame";
+import MathChatAdventure from "./MathChatAdventure";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -24,7 +26,7 @@ const checkpoints = [
     id: 2,
     name: "Candy clock Time",
     type: "clock" as const,
-    position: { x: 35, y: 45 },
+    position: { x: 28, y: 63 },
     completed: true,
     stars: 2,
     game:"clockGame"
@@ -33,7 +35,7 @@ const checkpoints = [
     id: 3,
     name: "Lollipop Patterns",
     type: "lollipop" as const,
-    position: { x: 60, y: 25 },
+    position: { x: 42, y: 48 },
     completed: false,
     stars: 0,
     current: true,
@@ -42,7 +44,7 @@ const checkpoints = [
     id: 4,
     name: "Chocolate Letters",
     type: "chocolate" as const,
-    position: { x: 75, y: 60 },
+    position: { x: 55, y: 38 },
     completed: false,
     stars: 0,
     locked: true,
@@ -51,16 +53,36 @@ const checkpoints = [
     id: 5,
     name: "Clock Tower Time",
     type: "clock" as const,
-    position: { x: 90, y: 30 },
+    position: { x: 68, y: 50 },
     completed: false,
     stars: 0,
     locked: true,
+  },
+  {
+    id: 6,
+    name: "Clock Tower Time",
+    type: "clock" as const,
+    position: { x: 82, y: 43 },
+    completed: false,
+    stars: 0,
+    locked: true,
+  },
+   {
+    id: 7,
+    name: "Coversational Math Game",
+    type: "chocolate" as const,
+    position: { x: 95, y: 52 },
+    completed: false,
+    stars: 0,
+    current: true,
+    game:"MathChatAdventure"
   },
 ];
 
 export const CandyIslandMap = () => {
   const [selectedCheckpoint, setSelectedCheckpoint] = useState<number | null>(null);
   const [showGame, setShowGame] = useState(false);
+  const navigate = useNavigate();
 
   const handleCheckpointClick = (checkpointId: number) => {
     const checkpoint = checkpoints.find(cp => cp.id === checkpointId);
@@ -70,9 +92,23 @@ export const CandyIslandMap = () => {
   };
 
   const handlePlay = () => {
-    setShowGame(true); // ✅ Open game modal
-  };
+    const checkpoint = checkpoints.find(cp => cp.id === selectedCheckpoint);
+    if (!checkpoint) return;
 
+    switch (checkpoint.game) {
+      case "candyCount":
+        navigate("/game/candy-count");
+        break;
+      case "clockGame":
+        navigate("/game/clock");
+        break;
+      case "MathChatAdventure":
+        navigate("/game/math-chat");
+        break;
+      default:
+        alert("Game coming soon!");
+    }
+  };
    const renderGame = () => {
     const checkpoint = checkpoints.find(cp => cp.id === selectedCheckpoint);
     if (!checkpoint) return null;
@@ -82,6 +118,8 @@ export const CandyIslandMap = () => {
         return <CandyCountGame />;
       case "clockGame":
         return <ClockGame />;
+        case "MathChatAdventure":
+        return <MathChatAdventure />;
       default:
         return <p className="text-center text-lg">🚧 Game coming soon!</p>;
     }

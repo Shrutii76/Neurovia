@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import StoryModal from "./StoryModal";
-import { CandyIslandMap }  from "./CandyIslandMap";
+import { CandyIslandMap } from "./CandyIslandMap";
+import { useNavigate } from "react-router-dom"; 
+
 import { useState } from "react";
 
 const HeroSection = () => {
     const [openStory, setOpenStory] = useState(false);
+      const navigate = useNavigate();  
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-candy">
@@ -25,9 +28,8 @@ const HeroSection = () => {
             
             <div className="flex flex-col  mt-6 sm:flex-row gap-4 justify-center ">
            <Button
-  onClick={() => {
-    document.getElementById("CandyIslandMap")?.scrollIntoView({ behavior: "smooth" });
-  }}
+  onClick={() => navigate("/CandyIslandMap")}
+  
   className="hover:scale-110 transition-transform duration-300 shadow-lg shadow-pink-300/50"
 >
   🍭 Start Adventure
@@ -47,7 +49,7 @@ const HeroSection = () => {
           </div>
 
             </div>
-            <p className="text-lg text-foreground font-nunito font-semibold mt-8 max-w-2xl mx-auto drop-shadow-sm">
+            <p className="text-lg text-center text-foreground font-nunito font-semibold mt-8 max-w-2xl mx-auto drop-shadow-sm">
           Embark on a sweet adventure through the magical Candy Island! 
           Discover colorful lands filled with delicious treats and exciting challenges.
         </p>

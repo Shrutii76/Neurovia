@@ -6,20 +6,29 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import HeroSection from "./components/HeroSection";
-
+import { CandyIslandMap } from "./components/CandyIslandMap";
+import { CandyCountGame } from "./components/CandyCountGame";
+import ClockGame from "./components/ClockGame";
+import MathChatAdventure from "./components/MathChatAdventure";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <HeroSection/>
     <TooltipProvider>
       <Toaster />
       <Sonner />
+
+      {/* ✅ Everything inside BrowserRouter */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* ✅ Only one / route */}
+          <Route path="/" element={<HeroSection />} />
+          <Route path="/index" element={<Index />} />
+          <Route path="/candyIslandMap" element={<CandyIslandMap />} />
+           <Route path="/game/candy-count" element={<CandyCountGame />} />
+    <Route path="/game/clock" element={<ClockGame />} />
+    <Route path="/game/math-chat" element={<MathChatAdventure />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
@@ -27,11 +36,4 @@ const App = () => (
   </QueryClientProvider>
 );
 
-
-
-
-
-
 export default App;
-
-

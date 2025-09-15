@@ -98,9 +98,13 @@ export default {
 					}
 				},
 				  float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-20px)" },
+    "0%, 100%": { transform: "translateY(0px)" },
+        "50%": { transform: "translateY(-15px)" },
         },
+		 gradient: {
+        "0%, 100%": { "background-position": "0% 50%" },
+        "50%": { "background-position": "100% 50%" },
+      },
         bounceCandy: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
@@ -118,6 +122,8 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				 float: "float 4s ease-in-out infinite",
+				  "float-delay-500": "float 4s ease-in-out 0.5s infinite",
+      "float-delay-1000": "float 4s ease-in-out 1s infinite",
         "bounce-candy": "bounceCandy 2s infinite",
         sparkle: "sparkle 1.5s infinite",
         wiggle: "wiggle 1s ease-in-out infinite",
