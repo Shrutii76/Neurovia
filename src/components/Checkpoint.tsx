@@ -5,11 +5,12 @@ import scaleIcon from "@/assets/checkpoint-scale.jpg";
 import lollipopIcon from "@/assets/checkpoint-lollipop.jpg";
 import chocolateIcon from "@/assets/checkpoint-chocolate.jpg";
 import clockIcon from "@/assets/checkpoint-clock.jpg";
+import chat from "@/assets/checkpoint-chat1.jpg";
 
 interface CheckpointData {
   id: number;
   name: string;
-  type: "cupcake" | "scale" | "lollipop" | "chocolate" | "clock";
+  type: "cupcake" | "scale" | "lollipop" | "chocolate" | "clock"|"chat";
   position: { x: number; y: number };
   completed: boolean;
   stars: number;
@@ -30,6 +31,7 @@ const checkpointIcons = {
   lollipop: lollipopIcon,
   chocolate: chocolateIcon,
   clock: clockIcon,
+  chat:chat,
 };
 
 export const Checkpoint = ({ checkpoint, isSelected, onClick, size = "normal" }: CheckpointProps) => {

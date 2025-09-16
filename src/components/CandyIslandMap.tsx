@@ -70,7 +70,7 @@ const checkpoints = [
    {
     id: 7,
     name: "Coversational Math Game",
-    type: "chocolate" as const,
+    type: "chat" as const,
     position: { x: 95, y: 52 },
     completed: false,
     stars: 0,
