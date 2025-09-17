@@ -10,7 +10,7 @@ import chat from "@/assets/checkpoint-chat1.jpg";
 interface CheckpointData {
   id: number;
   name: string;
-  type: "cupcake" | "scale" | "lollipop" | "chocolate" | "clock"|"chat";
+  type: "cupcake" | "scale" | "lollipop" | "chocolate" | "clock"|"chat" |"story";
   position: { x: number; y: number };
   completed: boolean;
   stars: number;

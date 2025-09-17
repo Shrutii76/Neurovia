@@ -26,7 +26,9 @@ const MathChatAdventure: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
-  const [showInstructions, setShowInstructions] = useState<boolean>(true); // 🔹 New
+  const [showInstructions, setShowInstructions] = useState<boolean>(true);
+  const [gameFinished, setGameFinished] = useState<boolean>(false);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const treats: string[] = ['🍪', '🍫', '🍭', '🧁', '🍰', '🍩', '🍬', '🎂', '🥧'];
@@ -39,7 +41,9 @@ const MathChatAdventure: React.FC = () => {
     { text: "A packet of cookies costs ₹9. How much will 6 packets cost?", answer: 54, calculation: "6 × ₹9 = ₹54" },
     { text: "I had 50 candies. I sold 32 candies. How many candies are left with me?", answer: 18, calculation: "50 - 32 = 18" },
     { text: "A birthday cake costs ₹25 and candles cost ₹3. What's the total cost for 1 cake and 5 candles?", answer: 40, calculation: "₹25 + (5 × ₹3) = ₹25 + ₹15 = ₹40" },
-    { text: "I have 4 jars. Each jar has 15 toffees. How many toffees do I have altogether?", answer: 60, calculation: "4 × 15 = 60" }
+    { text: "I have 4 jars. Each jar has 15 toffees. How many toffees do I have altogether?", answer: 60, calculation: "4 × 15 = 60" },
+    { text: "A chocolate bar costs ₹20. If you buy 3 chocolate bars and a soft drink for ₹15, what is the total cost?", answer: 75, calculation: "3 × ₹20 + ₹15 = ₹60 + ₹15 = ₹75" },
+    { text: "I bought 18 mangoes. I gave 7 mangoes to my friend. How many mangoes are left?", answer: 11, calculation: "18 - 7 = 11" }
   ];
 
   // Timer effect
@@ -85,7 +89,9 @@ const MathChatAdventure: React.FC = () => {
       addMessage("Let me ask you some questions about my shop! 🛍️");
       setTimeout(() => {
         setGameStarted(true);
+        setGameFinished(false);
         setQuestionCount(0);
+        setScore(0);
       }, 1500);
     }, 1000);
   };
@@ -111,7 +117,7 @@ const MathChatAdventure: React.FC = () => {
             addMessage("Let me ask you another question! 🤔");
             setQuestionCount(prev => prev + 1);
           } else {
-            addMessage(`Wow! You've answered all my questions! 🌟 Your final score is ${score + 1}/${questions.length}. You're amazing at math! 🍭`);
+            setGameFinished(true);
           }
         }, 1500);
       }, 500);
@@ -122,7 +128,7 @@ const MathChatAdventure: React.FC = () => {
           if (questionCount + 1 < questions.length) {
             setQuestionCount(prev => prev + 1);
           } else {
-            addMessage(`You've completed all questions! 🌟 Your final score is ${score}/${questions.length}. Great effort! Keep practicing and you'll get even better! 🍭`);
+            setGameFinished(true);
           }
         }, 1500);
       }, 500);
@@ -148,42 +154,101 @@ const MathChatAdventure: React.FC = () => {
     </div>
   );
 
- // 🟡 Instruction Screen
-if (showInstructions) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5">
-      <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">
-        🍭 Math Chat Adventure
-      </h1>
-      <p className="text-xl text-white/90 mb-8 max-w-2xl">
-        Help at sweet shop by solving fun math problems!
-        Earn points for each correct answer and watch your score grow!
-      </p>
+  // ✅ Progress bar calculation
+  const progress =
+    questionCount >= questions.length
+      ? 100
+      : (Math.max(questionCount, 0) / questions.length) * 100;
 
-      {/* How to Play Card */}
-      <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-8 text-left max-w-xl w-full mb-8">
-        <h2 className="text-2xl font-bold text-purple-700 mb-4">
-          📝 How to Play
-        </h2>
-        <ul className="list-disc list-inside text-purple-800 text-lg space-y-3">
-          <li>Read the question carefully and type your answer in the input box.</li>
-          <li>Press <strong>Enter</strong> or click the send button 📤 to submit.</li>
-          <li>You’ll earn 🏆 points for each correct answer.</li>
-          <li>Keep answering to finish all the questions and see your final score!</li>
-          <li>Watch your time and try to get the highest score possible. ⏱️</li>
-        </ul>
+  // ✅ Result Screen after finishing
+  if (gameFinished) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5 relative overflow-hidden">
+        {/* Floating treats */}
+        <div className="absolute inset-0 pointer-events-none z-10">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-3xl animate-bounce"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDuration: `${4 + Math.random() * 4}s`,
+                animationDelay: `${Math.random() * 6}s`
+              }}
+            >
+              {treats[Math.floor(Math.random() * treats.length)]}
+            </div>
+          ))}
+        </div>
+
+        <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-6">
+          🎉 Game Finished!
+        </h1>
+        <p className="text-xl text-white mb-6">
+          Your final score: <strong>{score}/{questions.length}</strong>
+        </p>
+
+        <p className="text-lg text-white mb-6">
+          {score === questions.length
+            ? "Perfect score! You’re a math star! 🌟"
+            : score >= questions.length / 2
+            ? "Great job! Keep practicing to get even better! 💪"
+            : "Nice try! You can always replay to improve! 😊"}
+        </p>
+
+        <button
+          onClick={() => {
+            setScore(0);
+            setQuestionCount(-1);
+            setGameStarted(false);
+            setGameFinished(false);
+            setShowInstructions(true);
+            setMessages([]);
+          }}
+          className="px-8 py-4 bg-white text-purple-700 rounded-2xl shadow-lg hover:scale-105 transition-transform text-xl font-bold"
+        >
+          🔄 Play Again
+        </button>
       </div>
+    );
+  }
 
-      <button
-        onClick={startGame}
-        className="px-8 py-4 bg-white text-purple-700 rounded-2xl shadow-lg hover:scale-105 transition-transform text-xl font-bold"
-      >
-        ▶️ Start Game
-      </button>
-    </div>
-  );
-}
+  // 🟡 Instruction Screen
+  if (showInstructions) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5">
+        <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">
+          🍭 Math Chat Adventure
+        </h1>
+        <p className="text-xl text-white/90 mb-8 max-w-2xl">
+          Help at sweet shop by solving fun math problems!
+          Earn points for each correct answer and watch your score grow!
+        </p>
 
+        {/* How to Play Card */}
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-8 text-left max-w-xl w-full mb-8">
+          <h2 className="text-2xl font-bold text-purple-700 mb-4">
+            📝 How to Play
+          </h2>
+          <ul className="list-disc list-inside text-purple-800 text-lg space-y-3">
+            <li>Read the question carefully and type your answer in the input box.</li>
+            <li>Press <strong>Enter</strong> or click the send button 📤 to submit.</li>
+            <li>You’ll earn 🏆 points for each correct answer.</li>
+            <li>Keep answering to finish all the questions and see your final score!</li>
+            <li>Watch your time and try to get the highest score possible. ⏱️</li>
+          </ul>
+        </div>
+
+        <button
+          onClick={startGame}
+          className="px-8 py-4 bg-white text-purple-700 rounded-2xl shadow-lg hover:scale-105 transition-transform text-xl font-bold"
+        >
+          ▶️ Start Game
+        </button>
+      </div>
+    );
+  }
 
   // 🟢 Game Screen
   return (
@@ -218,7 +283,7 @@ if (showInstructions) {
         <div className="w-4/5 mx-auto h-2 bg-white/30 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-300"
-            style={{ width: `${(Math.max(questionCount, 0) / questions.length) * 100}%` }}
+            style={{ width: `${progress}%` }}
           />
         </div>
       </div>

@@ -9,6 +9,11 @@ import { CandyCountGame } from "./CandyCountGame";
 import ClockGame from "./ClockGame";
 import MathChatAdventure from "./MathChatAdventure";
 import { useNavigate } from "react-router-dom";
+import CandyComparisonGame from "./CandyComparisonGame";
+import SymbolDetectiveGame from "./SymbolDetectiveGame";
+import MathStoryGame from "./MathsStoryGame";
+import { CandyClock } from "./CandyClock";
+import PatternChallenge from "./PatternChallenge";
 
 
 
@@ -20,52 +25,56 @@ const checkpoints = [
     position: { x: 15, y: 75 },
     completed: true,
     stars: 3,
-    game:"candyCount"
+    game:"candyCount",
+    locked:false
   },
   {
     id: 2,
-    name: "Candy clock Time",
-    type: "clock" as const,
+    name: "Pattern Challenge",
+    type: "chocolate" as const,
     position: { x: 28, y: 63 },
     completed: true,
     stars: 2,
-    game:"clockGame"
+    game:"PatternChallenge"
   },
   {
     id: 3,
-    name: "Lollipop Patterns",
-    type: "lollipop" as const,
+    name: "candy comparison",
+    type: "scale" as const,
     position: { x: 42, y: 48 },
     completed: false,
     stars: 0,
-    current: true,
+    game:"CandyComparisonGame"
   },
   {
     id: 4,
-    name: "Chocolate Letters",
-    type: "chocolate" as const,
+    name: "Symbol Detection",
+    type: "lollipop" as const,
     position: { x: 55, y: 38 },
     completed: false,
     stars: 0,
-    locked: true,
+    current:true,
+    game:"SymbolDetectiveGame"
   },
   {
     id: 5,
-    name: "Clock Tower Time",
+    name: "Candy clock",
     type: "clock" as const,
     position: { x: 68, y: 50 },
     completed: false,
-    stars: 0,
-    locked: true,
+    stars: 2,
+    current:true,
+    game:"CandyClock"
   },
   {
     id: 6,
-    name: "Clock Tower Time",
-    type: "clock" as const,
+    name: "Maths story",
+    type: "story" as const,
     position: { x: 82, y: 43 },
     completed: false,
     stars: 0,
-    locked: true,
+    current: true,
+   game:"MathsStoryGame"
   },
    {
     id: 7,
@@ -99,11 +108,23 @@ export const CandyIslandMap = () => {
       case "candyCount":
         navigate("/game/candy-count");
         break;
-      case "clockGame":
-        navigate("/game/clock");
-        break;
       case "MathChatAdventure":
         navigate("/game/math-chat");
+        break;
+          case "CandyComparisonGame":
+        navigate("/game/CandyComparison");
+        break;
+          case "MathsStoryGame":
+        navigate("/game/MathsStory");
+        break;
+        case "SymbolDetectiveGame":
+        navigate("/game/SymbolDetective");
+        break;
+           case "CandyClock":
+        navigate("/game/CandyClock");
+        break;
+          case "PatternChallenge":
+        navigate("/game/PatternChallenge");
         break;
       default:
         alert("Game coming soon!");
@@ -116,10 +137,18 @@ export const CandyIslandMap = () => {
     switch (checkpoint.game) {
       case "candyCount":
         return <CandyCountGame />;
-      case "clockGame":
-        return <ClockGame />;
         case "MathChatAdventure":
         return <MathChatAdventure />;
+          case "CandyComparisonGame":
+        return <CandyComparisonGame/>;
+        case "MathsStoryGame":
+          return <MathStoryGame/>;
+          case "SymbolDetectiveGame":
+            return <SymbolDetectiveGame/>;
+               case "CandyClock":
+            return <CandyClock/>;
+             case "PatternChallenge":
+            return <PatternChallenge/>;
       default:
         return <p className="text-center text-lg">🚧 Game coming soon!</p>;
     }
@@ -248,35 +277,25 @@ export const CandyIslandMap = () => {
       )}
 
       {/* ✅ Game Modal */}
-      {showGame && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center  z-50 p-4">
+      {/* {showGame && (
+        <div className="fixed inset-0 bg-black/80 flex items-center  justify-center  z-50 p-4">
          
-          <div className="bg-white rounded-2xl p-6 max-w-3xl w-full   overflow-auto">
+          <div className="bg-white rounded-2xl p-6 max-w-3xl w-full   overflow-auto"> */}
               {/* Close button at top-left */}
-      <Button
+      {/* <Button
         onClick={() => {
           setShowGame(false);
           setSelectedCheckpoint(null);
         }}
-        className="absolute top-4 left-4 ml-4 bg-pink-500 text-white px-4 py-2 rounded"
+        className="absolute top-4 left-4 ml-4 bg-pink-500 text-black px-4 py-2 rounded"
       >
         Close Game
       </Button>
             {renderGame()}
-            {/* <div className="mt-4 text-center">
-              <Button
-                onClick={() => {
-                  setShowGame(false);
-                  setSelectedCheckpoint(null);
-                }}
-                className="bg-pink-500 text-white px-6 py-2 rounded"
-              >
-                Close Game
-              </Button>
-            </div> */}
+           
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

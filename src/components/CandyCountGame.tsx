@@ -115,8 +115,8 @@ export function CandyCountGame() {
   }, [startCountingPhase]);
 
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+   <div className="min-h-screen flex items-center justify-center  bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
+  <div className="w-full max-w-4xl bg-white/70 rounded-3xl p-6 backdrop-blur-sm">
         {gameState === 'instructions' && (
           <GameInstructions onStart={startGame} />
         )}
