@@ -2,42 +2,39 @@
 import { Button } from "@/components/ui/button";
 import StoryModal from "./StoryModal";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatedTitle } from "./AnimatedTitle";
 import { speakIndianCartoon } from '../utils/speech';
-import { useEffect } from 'react';
+
+
 
 const HeroSection = () => {
   const [openStory, setOpenStory] = useState(false);
   const navigate = useNavigate();
+   const audioRef = useRef<HTMLAudioElement>(null);
 
-const playCartoonVoice = async () => {
-  try {
-    const res = await fetch('http://localhost:3001/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        voiceId: 'tc_66bc60339ab2db047154b94e',
-        text: 'Welcome to Candy Island! ...',
-        format: 'mp3'
-      })
-    });
-
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    audio.play();
-  } catch (err) {
-    console.error(err);
-  }
-};
+  const playMusic = () => {
+    audioRef.current?.play();
+  };
 
 
+  
     // play voice when component loads
-  // useEffect(() => {
-  //   speakIndianCartoon('"Welcome to Candy Island! Your sweet adventure begins here!Are you ready for your candy island world? Let’s go!"');
-  // }, []);
+  useEffect(() => {
+    speakIndianCartoon('"Welcome to Candy Island! Your sweet adventure begins here! Are you ready for your candy island world? Let’s go!"');
+  }, []);
 
+
+
+
+  const handleStartAdventure = () => {
+    speakIndianCartoon(
+      'Start your adventure! Each candy house hides a fun challenge just for you. Play and learn  along the way! 🌟 Are you ready for your candy adventure? Let’s go!'
+    );
+
+    // Delay navigation so audio can play
+    setTimeout(() => navigate("/CandyIslandMap"), 1500);
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-candy">
@@ -58,14 +55,13 @@ const playCartoonVoice = async () => {
             />
 
             <div className="flex flex-col mt-6 sm:flex-row gap-4 justify-center">
-            <Button
-  onClick={() => {
-    playCartoonVoice();
-    setTimeout(() => navigate("/CandyIslandMap"), 2000);
-  }}
->
-  🍭 Start Adventure
-</Button>
+          <Button
+                onClick={handleStartAdventure}
+                className="hover:scale-110 transition-transform duration-300 shadow-lg shadow-pink-300/50"
+              >
+                🍭 Start Adventure
+              </Button>
+
 
 
               <Button
@@ -89,6 +85,7 @@ const playCartoonVoice = async () => {
           </p>
         </div>
       </div>
+    
 
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent"></div>
     </section>

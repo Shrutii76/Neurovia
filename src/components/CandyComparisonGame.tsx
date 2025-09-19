@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import SymbolDetectiveGame from './SymbolDetectiveGame';
 
 interface ComparisonQuestion {
   leftItem: string;
@@ -19,6 +21,17 @@ const CandyComparisonGame: React.FC = () => {
 
   const totalQuestions = 10;
 
+  // 🔹 simple voice helper
+  const speak = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = 1.2;
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const candyItems = [
     { name: 'Apples', emoji: '🍎' },
     { name: 'Bananas', emoji: '🍌' },
@@ -29,6 +42,8 @@ const CandyComparisonGame: React.FC = () => {
     { name: 'Candies', emoji: '🍬' },
     { name: 'Ice Cream', emoji: '🍦' }
   ];
+
+  const navigate = useNavigate();
 
   const floatingCandies = [
     { emoji: '🍪', top: '15%', left: '8%', size: 'text-5xl' },
@@ -45,7 +60,6 @@ const CandyComparisonGame: React.FC = () => {
     const leftItem = candyItems[Math.floor(Math.random() * candyItems.length)];
     let rightItem = candyItems[Math.floor(Math.random() * candyItems.length)];
 
-    // ensure different items
     while (rightItem.name === leftItem.name) {
       rightItem = candyItems[Math.floor(Math.random() * candyItems.length)];
     }
@@ -87,13 +101,14 @@ const CandyComparisonGame: React.FC = () => {
     if (correct) {
       setScore((s) => s + 1);
       setFeedback('🎉 Correct!');
+      speak("correct!"); // 🔹 speak when correct
     } else {
       setFeedback('❌ Try again!');
+      speak("Try again!"); // 🔹 speak when wrong
     }
 
     setShowFeedback(true);
 
-    // Next question or end
     setTimeout(() => {
       if (questionNumber < totalQuestions) {
         setQuestionNumber((q) => q + 1);
@@ -107,6 +122,7 @@ const CandyComparisonGame: React.FC = () => {
   const progressWidth = `${(questionNumber / totalQuestions) * 100}%`;
 
   const startGame = () => {
+    speak("Let's start the game"); // 🔹 speak on start
     setScore(0);
     setQuestionNumber(1);
     setGameState('playing');
@@ -114,20 +130,17 @@ const CandyComparisonGame: React.FC = () => {
   };
 
   const playAgain = () => {
+    speak("Play again"); // 🔹 speak on play again
     setScore(0);
     setQuestionNumber(1);
     setGameState('instructions');
   };
 
   return (
-    <div
-     className="min-h-screen flex flex-col items-center justify-center text-center px-5"
-      style={{
-        background:
-          'radial-gradient(ellipse at center, #E879F9 0%, #C084FC 30%, #A855F7 60%, #7C3AED 100%)'
-      }}
-    >
-      {/* Floating candies */}
+  <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300">
+     {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-400/20 via-purple-400/20 to-blue-400/20 animate-pulse"></div>
+
       {floatingCandies.map((candy, index) => (
         <div
           key={index}
@@ -143,7 +156,6 @@ const CandyComparisonGame: React.FC = () => {
         </div>
       ))}
 
-      {/* Header */}
       <div className="relative z-10 text-center pt-16 pb-8">
         <h1
           className="text-5xl font-bold text-white drop-shadow-lg"
@@ -153,7 +165,6 @@ const CandyComparisonGame: React.FC = () => {
         </h1>
       </div>
 
-      {/* Instructions Screen */}
       {gameState === 'instructions' && (
         <div className="relative z-10 max-w-2xl mx-auto px-8">
           <div className="bg-white rounded-3xl shadow-2xl p-10 text-center">
@@ -161,15 +172,18 @@ const CandyComparisonGame: React.FC = () => {
               How to Play
             </h2>
             <p className="text-lg text-left mb-4">
-              🍭 You’ll see two sets of candies.<br></br>  
-              🍬 Click on the box that you think has more items.  <br></br>
-              🎯 Or click “They are Equal” if both sides have the same number.<br></br>
+              🍭 You’ll see two sets of candies.<br />  
+              🍬 Click on the box that you think has more items.  <br />
+              🎯 Or click “They are Equal” if both sides have the same number.<br />
             </p>
             <p className="text-lg mb-6">
               You have {totalQuestions} questions. Try to score as high as possible!
             </p>
             <button
-              onClick={startGame}
+              onClick={() => {
+                speak("Click"); // 🔹 speak on click
+                startGame();
+              }}
               className="text-2xl font-bold py-4 px-12 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)',
@@ -182,10 +196,8 @@ const CandyComparisonGame: React.FC = () => {
         </div>
       )}
 
-      {/* Game Screen */}
       {gameState === 'playing' && currentQuestion && (
         <>
-          {/* Progress bar */}
           <div className="relative z-10 max-w-4xl mx-auto px-8 mb-8">
             <div className="w-full h-3 bg-white bg-opacity-30 rounded-full">
               <div
@@ -213,7 +225,10 @@ const CandyComparisonGame: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-8 mb-12">
                 {/* Left Option */}
                 <div
-                  onClick={() => handleAnswer('left')}
+                  onClick={() => {
+                    speak("Click"); // 🔹 speak click
+                    handleAnswer('left');
+                  }}
                   className="cursor-pointer border-4 rounded-3xl p-8 text-center bg-blue-50 hover:scale-105 transition-transform"
                   style={{ borderColor: '#7DD3FC' }}
                 >
@@ -232,7 +247,10 @@ const CandyComparisonGame: React.FC = () => {
 
                 {/* Right Option */}
                 <div
-                  onClick={() => handleAnswer('right')}
+                  onClick={() => {
+                    speak("Click"); // 🔹 speak click
+                    handleAnswer('right');
+                  }}
                   className="cursor-pointer border-4 rounded-3xl p-8 text-center bg-yellow-50 hover:scale-105 transition-transform"
                   style={{ borderColor: '#FDE047' }}
                 >
@@ -250,11 +268,13 @@ const CandyComparisonGame: React.FC = () => {
                 </div>
               </div>
 
-              {/* Equal Button */}
               {!showFeedback && (
                 <div className="flex justify-center">
                   <button
-                    onClick={() => handleAnswer('equal')}
+                    onClick={() => {
+                      speak("Click"); // 🔹 speak click
+                      handleAnswer('equal');
+                    }}
                     className="text-2xl font-bold py-4 px-12 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
                     style={{
                       background: 'linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)',
@@ -266,7 +286,6 @@ const CandyComparisonGame: React.FC = () => {
                 </div>
               )}
 
-              {/* Feedback */}
               {showFeedback && (
                 <div className="text-center">
                   <div className="text-3xl font-bold p-6 rounded-2xl bg-gradient-to-r from-green-200 to-blue-200">
@@ -279,7 +298,6 @@ const CandyComparisonGame: React.FC = () => {
         </>
       )}
 
-      {/* Finished Screen */}
       {gameState === 'finished' && (
         <div className="relative z-10 max-w-2xl mx-auto px-8">
           <div className="bg-white rounded-3xl shadow-2xl p-10 text-center">
@@ -288,7 +306,10 @@ const CandyComparisonGame: React.FC = () => {
               Your Score: <span className="font-bold">{score}</span> / {totalQuestions}
             </p>
             <button
-              onClick={playAgain}
+              onClick={() => {
+                speak("Click"); // 🔹 speak click
+                playAgain();
+              }}
               className="text-2xl font-bold py-4 px-12 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)',
@@ -297,6 +318,13 @@ const CandyComparisonGame: React.FC = () => {
             >
               Play Again 🔄
             </button>
+{/* 
+             <button
+  onClick={() => navigate("/SymbolDetectiveGame")} // Replace "/next-game" with your route
+  className="px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
+>
+  ▶️ Next Game
+</button> */}
           </div>
         </div>
       )}

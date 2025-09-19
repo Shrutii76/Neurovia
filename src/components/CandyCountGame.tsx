@@ -24,6 +24,17 @@ const candyTypes: CandyItem[] = [
   { id: 'lollipop', name: 'Lollipop', image: lollipopImg, emoji: '🍭' },
 ];
 
+ const floatingCandies = [
+    { emoji: '🍪', top: '15%', left: '8%', size: 'text-5xl' },
+    { emoji: '🧁', top: '65%', left: '12%', size: 'text-4xl' },
+    { emoji: '🍭', top: '25%', left: '85%', size: 'text-6xl' },
+    { emoji: '🍩', top: '50%', left: '88%', size: 'text-5xl' },
+    { emoji: '🍫', top: '20%', left: '92%', size: 'text-4xl' },
+    { emoji: '🥤', top: '75%', left: '90%', size: 'text-5xl' },
+    { emoji: '🍰', top: '80%', left: '85%', size: 'text-4xl' },
+    { emoji: '✏️', top: '70%', left: '5%', size: 'text-4xl' },
+  ];
+
 export function CandyCountGame() {
   const [gameState, setGameState] = useState<GameState>('instructions');
   const [displayItems, setDisplayItems] = useState<Array<{ id: string; type: CandyItem; position: { x: number; y: number } }>>([]);
@@ -34,9 +45,20 @@ export function CandyCountGame() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const { toast } = useToast();
 
+  // 🔹 Simple helper to speak text aloud
+  const speak = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // stop previous
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = 1.2;
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   const generateRandomPosition = useCallback(() => ({
-    x: Math.random() * 80 + 10, // 10-90% of container width
-    y: Math.random() * 70 + 15, // 15-85% of container height
+    x: Math.random() * 80 + 10,
+    y: Math.random() * 70 + 15,
   }), []);
 
   const generateAnswerOptions = useCallback((correct: number) => {
@@ -51,9 +73,9 @@ export function CandyCountGame() {
   }, []);
 
   const startCountingPhase = useCallback(() => {
-    const itemCount = Math.floor(Math.random() * 6) + 2; // 2-7 items
+    const itemCount = Math.floor(Math.random() * 6) + 2;
     const selectedType = candyTypes[Math.floor(Math.random() * candyTypes.length)];
-    
+
     const newItems = Array.from({ length: itemCount }, (_, i) => ({
       id: `${selectedType.id}-${i}`,
       type: selectedType,
@@ -66,23 +88,25 @@ export function CandyCountGame() {
     setGameState('counting');
     setIsCorrect(null);
 
-    // Show items for 2-3 seconds, then move to question phase
     setTimeout(() => {
       setGameState('question');
     }, 2500);
   }, [generateRandomPosition, generateAnswerOptions]);
 
+  // 🔹 Added speak for correct/incorrect
   const handleAnswer = useCallback((selectedAnswer: number) => {
     const correct = selectedAnswer === correctAnswer;
     setIsCorrect(correct);
-    
+
     if (correct) {
+      speak("Excellent!"); // 🔹 voice feedback
       setScore(score + 1);
       toast({
         title: "Correct! 🎉",
         description: `You found ${correctAnswer} items!`,
       });
     } else {
+      speak("Good try!"); // 🔹 voice feedback
       toast({
         title: "Try again! 💪",
         description: `The correct answer was ${correctAnswer}`,
@@ -91,8 +115,7 @@ export function CandyCountGame() {
     }
 
     setGameState('result');
-    
-    // Auto-advance to next round after 2 seconds
+
     setTimeout(() => {
       setRound(round + 1);
       if (round >= 5) {
@@ -115,10 +138,27 @@ export function CandyCountGame() {
   }, [startCountingPhase]);
 
   return (
-   <div className="min-h-screen flex items-center justify-center  bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
-  <div className="w-full max-w-4xl bg-white/70 rounded-3xl p-6 backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center  bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
+      {floatingCandies.map((candy, index) => (
+        <div
+          key={index}
+          className={`absolute ${candy.size} opacity-80 animate-bounce`}
+          style={{
+            left: candy.left,
+            top: candy.top,
+            animationDelay: `${index * 0.5}s`,
+            animationDuration: '3s'
+          }}
+        >
+          {candy.emoji}
+        </div>
+      ))}
+      <div className="w-full max-w-4xl bg-white/70 rounded-3xl p-6 backdrop-blur-sm">
         {gameState === 'instructions' && (
-          <GameInstructions onStart={startGame} />
+          <GameInstructions onStart={() => {
+            speak("Let's start the game"); // 🔹 voice
+            startGame();
+          }} />
         )}
 
         {gameState === 'counting' && (
@@ -130,8 +170,7 @@ export function CandyCountGame() {
               </p>
               <div className="text-sm text-muted-foreground">Round {round} of 5</div>
             </Card>
-            
-            {/* Counting Box Container */}
+
             <Card className="bg-gradient-card backdrop-blur-sm border-4 border-primary/30 shadow-magical min-h-[400px] relative overflow-hidden">
               <div className="absolute inset-4">
                 {displayItems.map((item, index) => (
@@ -143,12 +182,11 @@ export function CandyCountGame() {
                   />
                 ))}
               </div>
-              
-              {/* Decorative sparkles in corners */}
+
               <div className="absolute top-4 left-4 text-2xl animate-sparkle">✨</div>
-              <div className="absolute top-4 right-4 text-2xl animate-sparkle" style={{animationDelay: '0.5s'}}>✨</div>
-              <div className="absolute bottom-4 left-4 text-2xl animate-sparkle" style={{animationDelay: '1s'}}>✨</div>
-              <div className="absolute bottom-4 right-4 text-2xl animate-sparkle" style={{animationDelay: '1.5s'}}>✨</div>
+              <div className="absolute top-4 right-4 text-2xl animate-sparkle" style={{ animationDelay: '0.5s' }}>✨</div>
+              <div className="absolute bottom-4 left-4 text-2xl animate-sparkle" style={{ animationDelay: '1s' }}>✨</div>
+              <div className="absolute bottom-4 right-4 text-2xl animate-sparkle" style={{ animationDelay: '1.5s' }}>✨</div>
             </Card>
           </div>
         )}
@@ -156,7 +194,7 @@ export function CandyCountGame() {
         {gameState === 'question' && (
           <Card className="bg-gradient-card backdrop-blur-sm border-2 border-white/30 shadow-magical p-8 text-center">
             <h2 className="text-3xl font-bold text-primary mb-6">How many did you see? 🤔</h2>
-            
+
             <div className="bg-white/80 rounded-3xl p-12 mb-8 border-4 border-primary/20">
               <div className="text-8xl text-accent">?</div>
             </div>
@@ -165,16 +203,18 @@ export function CandyCountGame() {
               {answerOptions.map((option) => (
                 <Button
                   key={option}
-                //   variant="answer"
                   size="lg"
                   className="text-2xl font-bold h-16"
-                  onClick={() => handleAnswer(option)}
+                  onClick={() => {
+                    speak("Click"); // 🔹 click voice
+                    handleAnswer(option);
+                  }}
                 >
                   {option}
                 </Button>
               ))}
             </div>
-            
+
             <div className="text-sm text-muted-foreground mt-4">Round {round} of 5</div>
           </Card>
         )}
@@ -188,7 +228,7 @@ export function CandyCountGame() {
               {isCorrect ? 'Excellent!' : 'Good try!'}
             </h2>
             <p className="text-xl text-muted-foreground mb-6">
-              {isCorrect 
+              {isCorrect
                 ? `You correctly counted ${correctAnswer} items!`
                 : `The correct answer was ${correctAnswer}`
               }
@@ -200,10 +240,13 @@ export function CandyCountGame() {
         )}
 
         {gameState === 'final' && (
-          <GameResults 
-            score={score} 
-            totalRounds={5} 
-            onPlayAgain={resetGame} 
+          <GameResults
+            score={score}
+            totalRounds={5}
+            onPlayAgain={() => {
+              speak("Play again");
+              resetGame();
+            }}
           />
         )}
       </div>

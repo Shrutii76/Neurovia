@@ -15,8 +15,7 @@ import MathStoryGame from "./MathsStoryGame";
 import { CandyClock } from "./CandyClock";
 import PatternChallenge from "./PatternChallenge";
 
-
-
+// ✅ Keep only checkpoints and speakName outside
 const checkpoints = [
   {
     id: 1,
@@ -25,8 +24,8 @@ const checkpoints = [
     position: { x: 15, y: 75 },
     completed: true,
     stars: 3,
-    game:"candyCount",
-    locked:false
+    game: "candyCount",
+    locked: false,
   },
   {
     id: 2,
@@ -35,7 +34,7 @@ const checkpoints = [
     position: { x: 28, y: 63 },
     completed: true,
     stars: 2,
-    game:"PatternChallenge"
+    game: "PatternChallenge",
   },
   {
     id: 3,
@@ -44,7 +43,7 @@ const checkpoints = [
     position: { x: 42, y: 48 },
     completed: false,
     stars: 0,
-    game:"CandyComparisonGame"
+    game: "CandyComparisonGame",
   },
   {
     id: 4,
@@ -53,8 +52,8 @@ const checkpoints = [
     position: { x: 55, y: 38 },
     completed: false,
     stars: 0,
-    current:true,
-    game:"SymbolDetectiveGame"
+    current: true,
+    game: "SymbolDetectiveGame",
   },
   {
     id: 5,
@@ -63,8 +62,8 @@ const checkpoints = [
     position: { x: 68, y: 50 },
     completed: false,
     stars: 2,
-    current:true,
-    game:"CandyClock"
+    current: true,
+    game: "CandyClock",
   },
   {
     id: 6,
@@ -74,9 +73,9 @@ const checkpoints = [
     completed: false,
     stars: 0,
     current: true,
-   game:"MathsStoryGame"
+    game: "MathsStoryGame",
   },
-   {
+  {
     id: 7,
     name: "Coversational Math Game",
     type: "chat" as const,
@@ -84,24 +83,38 @@ const checkpoints = [
     completed: false,
     stars: 0,
     current: true,
-    game:"MathChatAdventure"
+    game: "MathChatAdventure",
   },
 ];
 
+// ✅ Speech helper
+const speakName = (text: string) => {
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-IN"; // or en-US
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  window.speechSynthesis.speak(utterance);
+};
+
 export const CandyIslandMap = () => {
-  const [selectedCheckpoint, setSelectedCheckpoint] = useState<number | null>(null);
+  const [selectedCheckpoint, setSelectedCheckpoint] = useState<number | null>(
+    null
+  );
   const [showGame, setShowGame] = useState(false);
   const navigate = useNavigate();
 
+  // ✅ Only one handleCheckpointClick INSIDE the component
   const handleCheckpointClick = (checkpointId: number) => {
-    const checkpoint = checkpoints.find(cp => cp.id === checkpointId);
+    const checkpoint = checkpoints.find((cp) => cp.id === checkpointId);
     if (checkpoint && !checkpoint.locked) {
+      speakName(checkpoint.name); // speak aloud
       setSelectedCheckpoint(checkpointId);
     }
   };
 
   const handlePlay = () => {
-    const checkpoint = checkpoints.find(cp => cp.id === selectedCheckpoint);
+    const checkpoint = checkpoints.find((cp) => cp.id === selectedCheckpoint);
     if (!checkpoint) return;
 
     switch (checkpoint.game) {
@@ -111,63 +124,82 @@ export const CandyIslandMap = () => {
       case "MathChatAdventure":
         navigate("/game/math-chat");
         break;
-          case "CandyComparisonGame":
+      case "CandyComparisonGame":
         navigate("/game/CandyComparison");
         break;
-          case "MathsStoryGame":
+      case "MathsStoryGame":
         navigate("/game/MathsStory");
         break;
-        case "SymbolDetectiveGame":
+      case "SymbolDetectiveGame":
         navigate("/game/SymbolDetective");
         break;
-           case "CandyClock":
+      case "CandyClock":
         navigate("/game/CandyClock");
         break;
-          case "PatternChallenge":
+      case "PatternChallenge":
         navigate("/game/PatternChallenge");
         break;
       default:
         alert("Game coming soon!");
     }
   };
-   const renderGame = () => {
-    const checkpoint = checkpoints.find(cp => cp.id === selectedCheckpoint);
+
+  const renderGame = () => {
+    const checkpoint = checkpoints.find((cp) => cp.id === selectedCheckpoint);
     if (!checkpoint) return null;
 
     switch (checkpoint.game) {
       case "candyCount":
         return <CandyCountGame />;
-        case "MathChatAdventure":
+      case "MathChatAdventure":
         return <MathChatAdventure />;
-          case "CandyComparisonGame":
-        return <CandyComparisonGame/>;
-        case "MathsStoryGame":
-          return <MathStoryGame/>;
-          case "SymbolDetectiveGame":
-            return <SymbolDetectiveGame/>;
-               case "CandyClock":
-            return <CandyClock/>;
-             case "PatternChallenge":
-            return <PatternChallenge/>;
+      case "CandyComparisonGame":
+        return <CandyComparisonGame />;
+      case "MathsStoryGame":
+        return <MathStoryGame />;
+      case "SymbolDetectiveGame":
+        return <SymbolDetectiveGame />;
+      case "CandyClock":
+        return <CandyClock />;
+      case "PatternChallenge":
+        return <PatternChallenge />;
       default:
         return <p className="text-center text-lg">🚧 Game coming soon!</p>;
     }
   };
 
   return (
-    <div id="CandyIslandMap" className="min-h-screen bg-gradient-island overflow-hidden relative">
+    <div
+      id="CandyIslandMap"
+      className="min-h-screen bg-gradient-island overflow-hidden relative"
+    >
       {/* Background Island */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"
         style={{ backgroundImage: `url(${candyIslandBg})` }}
       />
-      
+
       {/* Floating candy decorations */}
       <div className="absolute top-10 left-10 text-6xl float">🍭</div>
-      <div className="absolute top-20 right-20 text-5xl float" style={{ animationDelay: '1s' }}>🧁</div>
-      <div className="absolute bottom-20 left-20 text-4xl float" style={{ animationDelay: '2s' }}>🍫</div>
-      <div className="absolute bottom-10 right-10 text-5xl float" style={{ animationDelay: '0.5s' }}>🍬</div>
-      
+      <div
+        className="absolute top-20 right-20 text-5xl float"
+        style={{ animationDelay: "1s" }}
+      >
+        🧁
+      </div>
+      <div
+        className="absolute bottom-20 left-20 text-4xl float"
+        style={{ animationDelay: "2s" }}
+      >
+        🍫
+      </div>
+      <div
+        className="absolute bottom-10 right-10 text-5xl float"
+        style={{ animationDelay: "0.5s" }}
+      >
+        🍬
+      </div>
+
       {/* Header */}
       <div className="relative z-10 p-6">
         <Card className="bg-gradient-candy-pink shadow-candy border-0 backdrop-blur-sm bg-opacity-90">
@@ -177,7 +209,9 @@ export const CandyIslandMap = () => {
                 <h1 className="text-3xl font-bold bg-gradient-rainbow bg-clip-text text-transparent">
                   Candy Quest Island
                 </h1>
-                <p className="text-muted-foreground mt-1">Choose your sweet adventure!</p>
+                <p className="text-muted-foreground mt-1">
+                  Choose your sweet adventure!
+                </p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1 text-candy-sunshine">
@@ -203,7 +237,7 @@ export const CandyIslandMap = () => {
         <div className="relative w-full h-[600px] overflow-hidden rounded-3xl">
           {/* Candy Path */}
           <CandyPath checkpoints={checkpoints} />
-          
+
           {/* Checkpoints */}
           {checkpoints.map((checkpoint) => (
             <Checkpoint
@@ -222,37 +256,39 @@ export const CandyIslandMap = () => {
           <Card className="bg-gradient-candy-pink shadow-candy border-0  max-w-md w-full">
             <div className="p-6 text-center">
               {(() => {
-                const checkpoint = checkpoints.find(cp => cp.id === selectedCheckpoint);
+                const checkpoint = checkpoints.find(
+                  (cp) => cp.id === selectedCheckpoint
+                );
                 if (!checkpoint) return null;
-                
+
                 return (
                   <>
                     <div className="mb-4">
-                      <Checkpoint 
-                        checkpoint={checkpoint} 
-                        isSelected={false} 
-                        onClick={() => {}} 
+                      <Checkpoint
+                        checkpoint={checkpoint}
+                        isSelected={false}
+                        onClick={() => {}}
                         size="large"
                       />
                     </div>
-                    
+
                     <h2 className="text-2xl font-bold mb-2 text-foreground">
                       {checkpoint.name}
                     </h2>
-                    
+
                     <div className="flex justify-center gap-1 mb-4">
                       {[1, 2, 3].map((star) => (
-                        <Star 
+                        <Star
                           key={star}
                           className={`w-6 h-6 ${
-                            star <= checkpoint.stars 
-                              ? 'text-candy-sunshine fill-current' 
-                              : 'text-muted-foreground'
+                            star <= checkpoint.stars
+                              ? "text-candy-sunshine fill-current"
+                              : "text-muted-foreground"
                           }`}
                         />
                       ))}
                     </div>
-                    
+
                     <div className="flex gap-3">
                       <Button
                         variant="outline"
@@ -275,27 +311,6 @@ export const CandyIslandMap = () => {
           </Card>
         </div>
       )}
-
-      {/* ✅ Game Modal */}
-      {/* {showGame && (
-        <div className="fixed inset-0 bg-black/80 flex items-center  justify-center  z-50 p-4">
-         
-          <div className="bg-white rounded-2xl p-6 max-w-3xl w-full   overflow-auto"> */}
-              {/* Close button at top-left */}
-      {/* <Button
-        onClick={() => {
-          setShowGame(false);
-          setSelectedCheckpoint(null);
-        }}
-        className="absolute top-4 left-4 ml-4 bg-pink-500 text-black px-4 py-2 rounded"
-      >
-        Close Game
-      </Button>
-            {renderGame()}
-           
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

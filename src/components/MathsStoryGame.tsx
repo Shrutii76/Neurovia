@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const MathStoryGame = () => {
   const [gameState, setGameState] = useState('intro'); // 'intro', 'playing', 'results'
@@ -48,14 +48,20 @@ const MathStoryGame = () => {
 
   const handleAnswerClick = (answerIndex) => {
     if (showFeedback) return;
-    
+
     setSelectedAnswer(answerIndex);
     setShowFeedback(true);
-    
-    if (answerIndex === questions[currentQuestion].correctIndex) {
-      setScore(score + 1);
-    }
-    
+
+    const correct = answerIndex === questions[currentQuestion].correctIndex;
+    if (correct) setScore(score + 1);
+
+    // --- Speak Feedback ---
+    speakText(
+      correct
+        ? " Correct!"
+        : ` Wrong! The correct answer is ${questions[currentQuestion].options[questions[currentQuestion].correctIndex]}`
+    );
+
     setTimeout(() => {
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
@@ -64,7 +70,7 @@ const MathStoryGame = () => {
       } else {
         setGameState('results');
       }
-    }, 1500);
+    }, 2000);
   };
 
   const resetGame = () => {
@@ -75,60 +81,49 @@ const MathStoryGame = () => {
     setGameState('intro');
   };
 
-  const startGame = () => {
-    setGameState('playing');
-  };
+  const startGame = () => setGameState('playing');
 
   const getAnswerButtonClass = (index) => {
-    if (!showFeedback) {
-      return "bg-green-500 hover:bg-green-600 transform hover:scale-105 transition-all duration-200";
-    }
-    
-    if (index === questions[currentQuestion].correctIndex) {
-      return "bg-green-600 ring-4 ring-green-300 animate-pulse";
-    } else if (index === selectedAnswer) {
-      return "bg-red-500 ring-4 ring-red-300";
-    } else {
-      return "bg-gray-400";
-    }
+    if (!showFeedback) return "bg-green-500 hover:bg-green-600 transform hover:scale-105 transition-all duration-200";
+    if (index === questions[currentQuestion].correctIndex) return "bg-green-600 ring-4 ring-green-300 animate-pulse";
+    if (index === selectedAnswer) return "bg-red-500 ring-4 ring-red-300";
+    return "bg-gray-400";
+  };
+
+  // --- Voice Function ---
+  const speakText = (text) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}]/gu, '')); // remove emojis
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
   };
 
   if (gameState === 'intro') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 overflow-hidden relative">
-        {/* Floating Treats */}
         {floatingTreats.map((treat, index) => (
           <div
             key={index}
             className="absolute text-4xl animate-bounce"
-            style={{
-              top: treat.top,
-              left: treat.left,
-              right: treat.right,
-              animationDelay: treat.delay,
-              animationDuration: "3s"
-            }}
-          >
-            {treat.emoji}
-          </div>
+            style={{ top: treat.top, left: treat.left, right: treat.right, animationDelay: treat.delay, animationDuration: "3s" }}
+          >{treat.emoji}</div>
         ))}
-
         <div className="flex items-center justify-center min-h-screen p-4">
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
-            <div className="mb-6">
-              <h1 className="text-4xl font-bold text-purple-600 mb-2">Math Story Time</h1>
-              <p className="text-lg text-blue-600 font-medium">Age Group: 8-12 🎯</p>
-            </div>
-            
+            <h1 className="text-4xl font-bold text-purple-600 mb-2">Math Story Time</h1>
+            <p className="text-lg text-blue-600 font-medium">Age Group: 8-12 🎯</p>
             <div className="bg-green-100 rounded-2xl p-6 mb-8">
               <h2 className="text-2xl font-bold text-green-700 mb-4">How to Play</h2>
               <div className="space-y-3 text-green-700">
                 <p>You will see a math story problem.</p>
                 <p>Read it carefully and solve the problem!</p>
                 <p>Then tap the correct answer.</p>
+                <p>🔊 You can click the speaker icon to hear the question.</p>
+                <p>✅/❌ You will hear feedback after selecting an answer!</p>
               </div>
             </div>
-            
             <button
               onClick={startGame}
               className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-8 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg"
@@ -144,55 +139,34 @@ const MathStoryGame = () => {
   if (gameState === 'results') {
     const percentage = Math.round((score / questions.length) * 100);
     const celebration = percentage >= 80 ? "🎉🌟" : percentage >= 60 ? "🎊👏" : "💪🌈";
-    
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 overflow-hidden relative">
-        {/* Floating Treats */}
         {floatingTreats.map((treat, index) => (
           <div
             key={index}
             className="absolute text-4xl animate-spin"
-            style={{
-              top: treat.top,
-              left: treat.left,
-              right: treat.right,
-              animationDelay: treat.delay,
-              animationDuration: "4s"
-            }}
-          >
-            {treat.emoji}
-          </div>
+            style={{ top: treat.top, left: treat.left, right: treat.right, animationDelay: treat.delay, animationDuration: "4s" }}
+          >{treat.emoji}</div>
         ))}
-
         <div className="flex items-center justify-center min-h-screen p-4">
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
-            <div className="mb-6">
-              <div className="text-6xl mb-4">{celebration}</div>
-              <h2 className="text-3xl font-bold text-purple-600 mb-2">Great Job!</h2>
-              <div className="text-6xl font-bold text-green-600 mb-2">
-                {score}/{questions.length}
-              </div>
-              <p className="text-xl text-blue-600">
-                You got {percentage}% correct!
+            <div className="text-6xl mb-4">{celebration}</div>
+            <h2 className="text-3xl font-bold text-purple-600 mb-2">Great Job!</h2>
+            <div className="text-6xl font-bold text-green-600 mb-2">{score}/{questions.length}</div>
+            <p className="text-xl text-blue-600">You got {percentage}% correct!</p>
+            <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-4 my-4">
+              <p className="text-lg text-gray-700">
+                {percentage >= 80 ? "Amazing work! You're a math star! ⭐" :
+                 percentage >= 60 ? "Good job! Keep practicing! 👍" :
+                 "Don't give up! Practice makes perfect! 💪"}
               </p>
             </div>
-            
-            <div className="space-y-4">
-              <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-4">
-                <p className="text-lg text-gray-700">
-                  {percentage >= 80 ? "Amazing work! You're a math star! ⭐" :
-                   percentage >= 60 ? "Good job! Keep practicing! 👍" :
-                   "Don't give up! Practice makes perfect! 💪"}
-                </p>
-              </div>
-              
-              <button
-                onClick={resetGame}
-                className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-8 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg w-full"
-              >
-                Play Again! 🔄
-              </button>
-            </div>
+            <button
+              onClick={resetGame}
+              className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-8 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg w-full"
+            >
+              Play Again! 🔄
+            </button>
           </div>
         </div>
       </div>
@@ -201,40 +175,23 @@ const MathStoryGame = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 overflow-hidden relative">
-      {/* Floating Treats */}
       {floatingTreats.map((treat, index) => (
         <div
           key={index}
           className="absolute text-3xl animate-pulse"
-          style={{
-            top: treat.top,
-            left: treat.left,
-            right: treat.right,
-            animationDelay: treat.delay,
-            animationDuration: "2s"
-          }}
-        >
-          {treat.emoji}
-        </div>
+          style={{ top: treat.top, left: treat.left, right: treat.right, animationDelay: treat.delay, animationDuration: "2s" }}
+        >{treat.emoji}</div>
       ))}
 
-      {/* Header */}
       <div className="relative z-10 p-4">
         <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={resetGame}
-            className="text-white text-lg hover:text-yellow-200 transition-colors duration-200"
-          >
-            ← Back to Games
-          </button>
+          <button onClick={resetGame} className="text-white text-lg hover:text-yellow-200 transition-colors duration-200">← Back to Games</button>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white">Math Story Time 📖</h1>
             <p className="text-white/80">Age Group: 8-12 🎯</p>
           </div>
           <div className="w-20"></div>
         </div>
-
-        {/* Progress Bar */}
         <div className="w-full bg-white/30 rounded-full h-3 mb-6">
           <div
             className="bg-white rounded-full h-3 transition-all duration-500 ease-out"
@@ -243,17 +200,18 @@ const MathStoryGame = () => {
         </div>
       </div>
 
-      {/* Game Content */}
       <div className="flex items-center justify-center px-4">
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-6 max-w-2xl w-full">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-green-600 mb-6">Solve the problem</h2>
-            
-            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 mb-6">
-              <p className="text-xl text-gray-800 leading-relaxed">
-                {questions[currentQuestion].question}
-              </p>
-            </div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-green-600">Solve the problem</h2>
+            <button
+              onClick={() => speakText(questions[currentQuestion].question)}
+              className="text-2xl p-2 bg-yellow-200 rounded-full hover:bg-yellow-300 transition-colors"
+            >🔊</button>
+          </div>
+
+          <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 mb-6">
+            <p className="text-xl text-gray-800 leading-relaxed">{questions[currentQuestion].question}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -282,7 +240,6 @@ const MathStoryGame = () => {
             </div>
           )}
 
-          {/* Question Counter */}
           <div className="text-center mt-6 text-gray-500">
             Question {currentQuestion + 1} of {questions.length}
           </div>

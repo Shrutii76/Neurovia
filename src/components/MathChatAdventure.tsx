@@ -69,6 +69,15 @@ const MathChatAdventure: React.FC = () => {
     }
   }, [questionCount, gameStarted]);
 
+  const speakText = (text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}]/gu, '')); // remove emojis
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
+
   const addMessage = (text: string, isUser: boolean = false) => {
     setMessages(prev => [...prev, { text, isUser }]);
   };
@@ -99,15 +108,15 @@ const MathChatAdventure: React.FC = () => {
   const submitAnswer = () => {
     if (!currentQuestion) return;
     const userAnswer = parseInt(inputValue.trim());
-    if (isNaN(userAnswer)) {
-      return;
-    }
+    if (isNaN(userAnswer)) return;
+
     addMessage(userAnswer.toString(), true);
     setInputValue('');
 
     if (userAnswer === currentQuestion.answer) {
       setScore(prev => prev + 1);
       setShowCelebration(true);
+      speakText("Correct! Well done!");
       setTimeout(() => setShowCelebration(false), 2000);
 
       setTimeout(() => {
@@ -122,6 +131,7 @@ const MathChatAdventure: React.FC = () => {
         }, 1500);
       }, 500);
     } else {
+      speakText(`Wrong! The correct answer is ${currentQuestion.answer}`);
       setTimeout(() => {
         addMessage(`Not quite right! The correct answer is ${currentQuestion.answer}. ${currentQuestion.calculation}. Don't worry, let's try another one! 💪`);
         setTimeout(() => {
@@ -136,9 +146,7 @@ const MathChatAdventure: React.FC = () => {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      submitAnswer();
-    }
+    if (e.key === 'Enter') submitAnswer();
   };
 
   const FloatingTreat: React.FC<FloatingTreatProps> = ({ treat, style }) => (
@@ -154,17 +162,12 @@ const MathChatAdventure: React.FC = () => {
     </div>
   );
 
-  // ✅ Progress bar calculation
-  const progress =
-    questionCount >= questions.length
-      ? 100
-      : (Math.max(questionCount, 0) / questions.length) * 100;
+  const progress = questionCount >= questions.length ? 100 : (Math.max(questionCount, 0) / questions.length) * 100;
 
-  // ✅ Result Screen after finishing
+  // ✅ Result Screen
   if (gameFinished) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5 relative overflow-hidden">
-        {/* Floating treats */}
         <div className="absolute inset-0 pointer-events-none z-10">
           {Array.from({ length: 30 }).map((_, i) => (
             <div
@@ -182,13 +185,8 @@ const MathChatAdventure: React.FC = () => {
           ))}
         </div>
 
-        <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-6">
-          🎉 Game Finished!
-        </h1>
-        <p className="text-xl text-white mb-6">
-          Your final score: <strong>{score}/{questions.length}</strong>
-        </p>
-
+        <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-6">🎉 Game Finished!</h1>
+        <p className="text-xl text-white mb-6">Your final score: <strong>{score}/{questions.length}</strong></p>
         <p className="text-lg text-white mb-6">
           {score === questions.length
             ? "Perfect score! You’re a math star! 🌟"
@@ -218,25 +216,18 @@ const MathChatAdventure: React.FC = () => {
   if (showInstructions) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5">
-        <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">
-          🍭 Math Chat Adventure
-        </h1>
+        <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">🍭 Math Chat Adventure</h1>
         <p className="text-xl text-white/90 mb-8 max-w-2xl">
-          Help at sweet shop by solving fun math problems!
-          Earn points for each correct answer and watch your score grow!
+          Help at sweet shop by solving fun math problems! Earn points for each correct answer and watch your score grow!
         </p>
 
-        {/* How to Play Card */}
         <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-8 text-left max-w-xl w-full mb-8">
-          <h2 className="text-2xl font-bold text-purple-700 mb-4">
-            📝 How to Play
-          </h2>
+          <h2 className="text-2xl font-bold text-purple-700 mb-4">📝 How to Play</h2>
           <ul className="list-disc list-inside text-purple-800 text-lg space-y-3">
             <li>Read the question carefully and type your answer in the input box.</li>
             <li>Press <strong>Enter</strong> or click the send button 📤 to submit.</li>
-            <li>You’ll earn 🏆 points for each correct answer.</li>
+            <li>You'll hear voice feedback for correct or wrong answers.</li>
             <li>Keep answering to finish all the questions and see your final score!</li>
-            <li>Watch your time and try to get the highest score possible. ⏱️</li>
           </ul>
         </div>
 
@@ -253,38 +244,24 @@ const MathChatAdventure: React.FC = () => {
   // 🟢 Game Screen
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 relative overflow-hidden font-sans">
-      {/* Floating Treats */}
       <div className="absolute inset-0 pointer-events-none z-10">
         {Array.from({ length: 20 }).map((_, i) => (
           <FloatingTreat
             key={i}
             treat={treats[Math.floor(Math.random() * treats.length)]}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
+            style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
           />
         ))}
       </div>
 
       {/* Header */}
       <div className="relative z-20 text-center p-5 bg-white/20 backdrop-blur-sm">
-        <div className="absolute top-5 right-5 bg-white px-4 py-2 rounded-full shadow-lg font-bold text-purple-700">
-          ⏱️ {timer}
-        </div>
-        <div className="absolute top-20 right-5 bg-white px-4 py-2 rounded-2xl shadow-lg font-bold text-green-600">
-          🏆 Score: {score}
-        </div>
-        <h1 className="text-4xl font-bold text-purple-700 mb-2 drop-shadow-sm">
-          🍭 Math Chat Adventure
-        </h1>
+        <div className="absolute top-5 right-5 bg-white px-4 py-2 rounded-full shadow-lg font-bold text-purple-700">⏱️ {timer}</div>
+        <div className="absolute top-20 right-5 bg-white px-4 py-2 rounded-2xl shadow-lg font-bold text-green-600">🏆 Score: {score}</div>
+        <h1 className="text-4xl font-bold text-purple-700 mb-2 drop-shadow-sm">🍭 Math Chat Adventure</h1>
         <p className="text-xl text-purple-600 mb-4">Age Group: 8-10 🍰</p>
-        {/* Progress Bar */}
         <div className="w-4/5 mx-auto h-2 bg-white/30 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+          <div className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
@@ -294,22 +271,14 @@ const MathChatAdventure: React.FC = () => {
           {/* Messages */}
           <div className="flex-1 mb-5 max-h-96 overflow-y-auto">
             {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex items-start mb-4 animate-fade-in ${message.isUser ? 'justify-end' : ''}`}
-              >
+              <div key={index} className={`flex items-start mb-4 animate-fade-in ${message.isUser ? 'justify-end' : ''}`}>
                 {!message.isUser && (
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-xl mr-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-xl mr-4 cursor-pointer"
+                       onClick={() => speakText(message.text)}>
                     🧁
                   </div>
                 )}
-                <div
-                  className={`max-w-md px-5 py-4 rounded-2xl text-lg leading-relaxed ${
-                    message.isUser
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-indigo-100 text-indigo-900'
-                  }`}
-                >
+                <div className={`max-w-md px-5 py-4 rounded-2xl text-lg leading-relaxed ${message.isUser ? 'bg-purple-500 text-white' : 'bg-indigo-100 text-indigo-900'}`}>
                   {message.text}
                 </div>
               </div>
@@ -337,7 +306,6 @@ const MathChatAdventure: React.FC = () => {
         </div>
       </div>
 
-      {/* Celebration Modal */}
       {showCelebration && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div className="bg-white p-8 rounded-3xl shadow-2xl text-center animate-bounce">
@@ -348,19 +316,8 @@ const MathChatAdventure: React.FC = () => {
       )}
 
       <style>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-in;
-        }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fade-in 0.5s ease-in; }
       `}</style>
     </div>
   );
