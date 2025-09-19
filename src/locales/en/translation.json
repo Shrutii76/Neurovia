@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "animatedTitle": "Welcome to Candy Island!",
+    "description": "Embark on a sweet adventure through the magical Candy Island! Discover colorful lands filled with delicious treats and exciting challenges.",
+    "startButton": "🍭 Start Adventure",
+    "readStoryButton": "📖 Read Story"
+  },
+
+  "game": {
+    "instructions": {
+      "title": "Quick Count Challenge",
+      "ageGroup": "Age Group: 6-12 years 🎮",
+      "howToPlay": "How to Play",
+      "step1": "You will see some fun objects for a short time.",
+      "step2": "Count them quickly before they disappear!",
+      "step3": "Then tap the correct number.",
+      "welcome": "Welcome to Candy Land! 🏰",
+      "description": "Step into a magical world filled with delicious treats! Count the magical candies, cherries, chocolates, donuts, ice creams, and lollipops as they appear and disappear like magic! ✨",
+      "start": "Let's Play! 🎮"
+    },
+    "counting": {
+      "title": "Count Quickly! ⚡",
+      "round": "Round {{current}} of {{total}}"
+    },
+    "question": {
+      "title": "How many did you see? 🤔",
+      "round": "Round {{current}} of {{total}}"
+    },
+    "result": {
+      "excellent": "Excellent!",
+      "goodTry": "Good try!",
+      "correct": "You correctly counted {{count}} items!",
+      "wrong": "The correct answer was {{count}}",
+      "score": "Score: {{score}} / {{round}}"
+    },
+    "final": {
+      "complete": "Game Complete!",
+      "amazing": "Amazing!",
+      "champion": "You are a Candy Counting Champion!",
+      "great": "Great Job!",
+      "wellDone": "You did really well in Candy Land!",
+      "keepTrying": "Good Try!",
+      "practice": "Keep practicing and you'll be amazing!",
+      "thanks": "Thanks for playing in our magical Candy Land! ✨",
+      "playAgain": "Play Again! 🎮",
+      "nextGame": "▶️ Next Game"
+    }
+  }
+}

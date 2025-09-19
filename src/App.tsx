@@ -8,7 +8,6 @@ import NotFound from "./pages/NotFound";
 import HeroSection from "./components/HeroSection";
 import { CandyIslandMap } from "./components/CandyIslandMap";
 import { CandyCountGame } from "./components/CandyCountGame";
-import ClockGame from "./components/ClockGame";
 import MathChatAdventure from "./components/MathChatAdventure";
 import CandyComparisonGame from "./components/CandyComparisonGame";
 import MathStoryGame from "./components/MathsStoryGame";
