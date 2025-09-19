@@ -18,6 +18,7 @@ const CandyComparisonGame: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [gameState, setGameState] = useState<'instructions' | 'playing' | 'finished'>('instructions');
+  const navigate = useNavigate();
 
   const totalQuestions = 10;
 
@@ -42,8 +43,6 @@ const CandyComparisonGame: React.FC = () => {
     { name: 'Candies', emoji: '🍬' },
     { name: 'Ice Cream', emoji: '🍦' }
   ];
-
-  const navigate = useNavigate();
 
   const floatingCandies = [
     { emoji: '🍪', top: '15%', left: '8%', size: 'text-5xl' },
@@ -101,10 +100,10 @@ const CandyComparisonGame: React.FC = () => {
     if (correct) {
       setScore((s) => s + 1);
       setFeedback('🎉 Correct!');
-      speak("correct!"); // 🔹 speak when correct
+      speak("Correct!");
     } else {
       setFeedback('❌ Try again!');
-      speak("Try again!"); // 🔹 speak when wrong
+      speak("Try again!");
     }
 
     setShowFeedback(true);
@@ -122,7 +121,7 @@ const CandyComparisonGame: React.FC = () => {
   const progressWidth = `${(questionNumber / totalQuestions) * 100}%`;
 
   const startGame = () => {
-    speak("Let's start the game"); // 🔹 speak on start
+    speak("Let's start the game");
     setScore(0);
     setQuestionNumber(1);
     setGameState('playing');
@@ -130,15 +129,31 @@ const CandyComparisonGame: React.FC = () => {
   };
 
   const playAgain = () => {
-    speak("Play again"); // 🔹 speak on play again
+    speak("Play again");
     setScore(0);
     setQuestionNumber(1);
     setGameState('instructions');
   };
 
+  // 🔹 badge logic
+  const getBadge = () => {
+    if (score === totalQuestions) return "🏆 Perfect Candy Master!";
+    if (score >= totalQuestions * 0.7) return "🥇 Sweet Genius!";
+    if (score >= totalQuestions * 0.4) return "🥈 Candy Explorer!";
+    return "🍭 Keep Practicing!";
+  };
+
   return (
-  <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300">
-     {/* Animated Background */}
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300">
+      {/* 🔙 Back to Games button */}
+      <button
+        onClick={() => navigate("/CandyIslandMap")}
+        className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+      >
+        ⬅️ Back to Games
+      </button>
+
+      {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-pink-400/20 via-purple-400/20 to-blue-400/20 animate-pulse"></div>
 
       {floatingCandies.map((candy, index) => (
@@ -165,6 +180,7 @@ const CandyComparisonGame: React.FC = () => {
         </h1>
       </div>
 
+      {/* Instructions */}
       {gameState === 'instructions' && (
         <div className="relative z-10 max-w-2xl mx-auto px-8">
           <div className="bg-white rounded-3xl shadow-2xl p-10 text-center">
@@ -172,8 +188,8 @@ const CandyComparisonGame: React.FC = () => {
               How to Play
             </h2>
             <p className="text-lg text-left mb-4">
-              🍭 You’ll see two sets of candies.<br />  
-              🍬 Click on the box that you think has more items.  <br />
+              🍭 You’ll see two sets of candies.<br />
+              🍬 Click on the box that you think has more items.<br />
               🎯 Or click “They are Equal” if both sides have the same number.<br />
             </p>
             <p className="text-lg mb-6">
@@ -181,7 +197,7 @@ const CandyComparisonGame: React.FC = () => {
             </p>
             <button
               onClick={() => {
-                speak("Click"); // 🔹 speak on click
+                speak("Click");
                 startGame();
               }}
               className="text-2xl font-bold py-4 px-12 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
@@ -196,6 +212,7 @@ const CandyComparisonGame: React.FC = () => {
         </div>
       )}
 
+      {/* Playing */}
       {gameState === 'playing' && currentQuestion && (
         <>
           <div className="relative z-10 max-w-4xl mx-auto px-8 mb-8">
@@ -226,7 +243,7 @@ const CandyComparisonGame: React.FC = () => {
                 {/* Left Option */}
                 <div
                   onClick={() => {
-                    speak("Click"); // 🔹 speak click
+                    speak("Click");
                     handleAnswer('left');
                   }}
                   className="cursor-pointer border-4 rounded-3xl p-8 text-center bg-blue-50 hover:scale-105 transition-transform"
@@ -248,7 +265,7 @@ const CandyComparisonGame: React.FC = () => {
                 {/* Right Option */}
                 <div
                   onClick={() => {
-                    speak("Click"); // 🔹 speak click
+                    speak("Click");
                     handleAnswer('right');
                   }}
                   className="cursor-pointer border-4 rounded-3xl p-8 text-center bg-yellow-50 hover:scale-105 transition-transform"
@@ -272,7 +289,7 @@ const CandyComparisonGame: React.FC = () => {
                 <div className="flex justify-center">
                   <button
                     onClick={() => {
-                      speak("Click"); // 🔹 speak click
+                      speak("Click");
                       handleAnswer('equal');
                     }}
                     className="text-2xl font-bold py-4 px-12 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
@@ -298,33 +315,102 @@ const CandyComparisonGame: React.FC = () => {
         </>
       )}
 
+      {/* Finished */}
       {gameState === 'finished' && (
         <div className="relative z-10 max-w-2xl mx-auto px-8">
-          <div className="bg-white rounded-3xl shadow-2xl p-10 text-center">
-            <h2 className="text-4xl font-bold mb-6 text-purple-700">🎉 Game Over!</h2>
-            <p className="text-2xl mb-6">
+          <div className="bg-white rounded-3xl shadow-2xl p-10 text-center relative">
+            <div className="absolute inset-0 overflow-hidden">
+             
+            </div>
+
+            <h2 className="text-4xl font-bold mb-4 text-purple-700 relative">🎉 Game Over!</h2>
+            <p className="text-2xl mb-2 relative">
               Your Score: <span className="font-bold">{score}</span> / {totalQuestions}
             </p>
-            <button
-              onClick={() => {
-                speak("Click"); // 🔹 speak click
-                playAgain();
-              }}
-              className="text-2xl font-bold py-4 px-12 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)',
-                fontFamily: 'Comic Sans MS, cursive'
-              }}
-            >
-              Play Again 🔄
-            </button>
-{/* 
-             <button
-  onClick={() => navigate("/SymbolDetectiveGame")} // Replace "/next-game" with your route
-  className="px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
->
-  ▶️ Next Game
-</button> */}
+
+            {/* Stars */}
+            <div className="flex justify-center mb-4">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const filledStars = Math.round((score / totalQuestions) * 5);
+                return (
+                  <span key={i} className="text-3xl">
+                    {i < filledStars ? '⭐' : '⚪'}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Performance Emoji */}
+            <p className="text-5xl mb-2">
+              {score === totalQuestions
+                ? '🤩'
+                : score >= totalQuestions * 0.7
+                ? '😃'
+                : score >= totalQuestions * 0.4
+                ? '🙂'
+                : '😅'}
+            </p>
+
+            {/* Badge */}
+            <p className="text-xl mb-4 font-bold text-pink-600 relative">{getBadge()}</p>
+
+            {/* Reaction Text */}
+            <p className="text-lg mb-4 relative">
+              {score === totalQuestions
+                ? "Incredible! You got every answer right!"
+                : score >= totalQuestions * 0.7
+                ? "Great job! You’re a math star!"
+                : score >= totalQuestions * 0.4
+                ? "Good effort! Keep practicing to improve."
+                : "Don't give up! Each round makes you better."}
+            </p>
+
+            {/* Bar Chart */}
+            <div className="mb-6">
+              <div className="w-full bg-gray-200 h-6 rounded-full overflow-hidden">
+                <div
+                  className="bg-green-400 h-full"
+                  style={{
+                    width: `${(score / totalQuestions) * 100}%`,
+                  }}
+                ></div>
+              </div>
+              <p className="mt-2 text-sm">
+                ✅ Correct: {score} | ❌ Incorrect: {totalQuestions - score}
+              </p>
+            </div>
+
+
+            
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center gap-4 relative">
+              <button
+                onClick={() => {
+                  speak("Click");
+                  playAgain();
+                }}
+                className="text-2xl py-3 px-8 rounded-2xl text-white transition-all hover:scale-105 shadow-lg"
+                style={{
+                  background: 'linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)',
+                  fontFamily: 'Comic Sans MS, cursive'
+                }}
+              >
+                Play Again 🔄
+              </button>
+
+              <button
+                onClick={() =>
+                  navigate("/game/SymbolDetective", {
+                    state: { from: "CandyComparisonGame" },
+                  })
+                }
+                className="text-2xl py-3 px-8 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform"
+                style={{ fontFamily: 'Comic Sans MS, cursive' }}
+              >
+                ▶️ Next Game
+              </button>
+            </div>
           </div>
         </div>
       )}

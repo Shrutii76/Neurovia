@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const MathStoryGame = () => {
   const [gameState, setGameState] = useState('intro'); // 'intro', 'playing', 'results'
@@ -6,6 +7,7 @@ const MathStoryGame = () => {
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const navigate=useNavigate();
 
   const questions = [
     {
@@ -95,7 +97,7 @@ const MathStoryGame = () => {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}]/gu, '')); // remove emojis
-    utterance.lang = "en-US";
+    utterance.lang = "en-IN";
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
   };
@@ -110,6 +112,13 @@ const MathStoryGame = () => {
             style={{ top: treat.top, left: treat.left, right: treat.right, animationDelay: treat.delay, animationDuration: "3s" }}
           >{treat.emoji}</div>
         ))}
+                 {/* 🔙 Back to Games button */}
+    <button
+      onClick={() => navigate("/CandyIslandMap")}
+      className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+    >
+      ⬅️ Back to Games
+    </button>
         <div className="flex items-center justify-center min-h-screen p-4">
           <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
             <h1 className="text-4xl font-bold text-purple-600 mb-2">Math Story Time</h1>
@@ -163,10 +172,19 @@ const MathStoryGame = () => {
             </div>
             <button
               onClick={resetGame}
-              className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-8 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg w-full"
+              className="bg-purple-500 hover:bg-purple-600 text-white text-xl  py-3 px-4 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg "
             >
               Play Again! 🔄
             </button>
+&nbsp;&nbsp;
+
+               <button
+  onClick={() => navigate("/game/math-chat", { state: { from: "MathsStoryGame" } })
+            }// Replace "/next-game" with your route
+  className="px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
+>
+  ▶️ Next Game
+</button>
           </div>
         </div>
       </div>

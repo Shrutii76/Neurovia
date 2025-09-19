@@ -1,93 +1,76 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import React from "react";
 
-
-interface StoryModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const StoryModal = ({ isOpen, onClose }: StoryModalProps) => {
- 
-  
+const CandyStory = () => {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <div className="max-w-3xl mx-auto my-10 p-6 rounded-2xl shadow-lg bg-gradient-to-b from-pink-100 to-yellow-50">
+      <h1 className="text-4xl font-bold text-center text-pink-600 mb-6">
+        🍬 The Great Adventure on Candy Island
+      </h1>
 
+      <div className="space-y-6 text-lg leading-relaxed font-nunito text-gray-800">
+        <p>
+          Once upon a time, two best friends <b>Lila</b> and <b>Max</b> set sail across
+          the <b>Sugar Sea</b> in a jellybean boat. They finally reached <b>Candy Island</b>,
+          a magical land where everything was sweet but guarded by <b>math challenges</b>.
+          To travel through each land, they had to play seven special games!
+        </p>
 
-      {/* Modal content */}
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto p-6 rounded-2xl shadow-lg bg-gradient-to-b from-pink-100 to-yellow-50">
-        <DialogHeader>
-          <DialogTitle className="text-3xl font-bold text-center text-pink-600">
-            🍬 The Great Adventure on Candy Island
-          </DialogTitle>
-        </DialogHeader>
+        <h3 className="text-xl font-semibold text-purple-600">🍬 Game 1: The Counting Grove</h3>
+        <p>
+          Lila and Max entered a field full of <b>lollipops, chocolates, donuts, and candies</b>.
+          The Candy Fairy asked them to <b>count how many items</b> and pick the correct number.
+          Only by counting correctly could they move ahead.
+        </p>
 
-        <div className="space-y-6 text-lg leading-relaxed font-nunito text-gray-800">
-          <p>
-            Once upon a time, two best friends, <b>Lila</b> and <b>Max</b>,
-            sailed across a sparkling <b>Sugar Sea</b> in a jellybean boat. They
-            dreamed of finding <b>Candy Island</b>, a magical land where
-            everything was made of sweets. But Candy Island had a secret… 👉 To
-            explore it, you had to solve <b>math puzzles</b> hidden in every
-            corner!
-          </p>
+        <h3 className="text-xl font-semibold text-purple-600">🎨 Game 2: The Pattern Path</h3>
+        <p>
+          Next came a glowing path of candies arranged in patterns: <b>🍬🍭🍬🍭…?</b>
+          Some parts were missing! They had to <b>fill in the blanks</b> to complete the
+          candy patterns and keep the path solid under their feet.
+        </p>
 
-          <h3 className="text-xl font-semibold text-purple-600">🌉 Chapter 1: The Chocolate Bridge</h3>
-          <p>
-            The first thing they saw was a huge <b>Chocolate Bridge</b> guarded
-            by a friendly candy wizard.
-          </p>
-          <p>
-            👉 Puzzle: “If there are <b>12 chocolate bars</b> and each child
-            eats <b>3</b>, how many children can share them equally?”
-          </p>
-          <p>✅ Answer: 4 children!</p>
+        <h3 className="text-xl font-semibold text-purple-600">⚖️ Game 3: The Comparison Bridge</h3>
+        <p>
+          Two giant candy boxes blocked the bridge. One box had <b>more sweets</b> than the other.
+          The Gummy Bear Guard said: “Pick the box with the <b>greater number of elements</b>.”
+          Choosing correctly opened the bridge.
+        </p>
 
-          <h3 className="text-xl font-semibold text-purple-600">🌳 Chapter 2: The Lollipop Forest</h3>
-          <p>
-            Each tree had <b>6 branches</b>, and each branch grew{" "}
-            <b>5 lollipops</b>.
-          </p>
-          <p>👉 Puzzle: How many lollipops are on one tree?</p>
-          <p>✅ Answer: 30 lollipops!</p>
+        <h3 className="text-xl font-semibold text-purple-600">🔍 Game 4: The Symbol Cave</h3>
+        <p>
+          Inside the glowing cave, strange <b>symbols</b> appeared on the walls.
+          They had to <b>detect and guess the right symbols</b> from options to open
+          the hidden door deeper into Candy Island.
+        </p>
 
-          <h3 className="text-xl font-semibold text-purple-600">🐻 Chapter 3: The Gummy Bear Guard</h3>
-          <p>
-            The guard asked: “I have <b>24 gummy bears</b>. If I put them into
-            groups of <b>8</b>, how many groups do I have?”
-          </p>
-          <p>✅ Answer: 3 groups!</p>
+        <h3 className="text-xl font-semibold text-purple-600">⏰ Game 5: The Candy Clock Tower</h3>
+        <p>
+          The Candy Clock Tower chimed. A wise owl asked them to <b>set the time on a magical clock</b>.
+          If they matched the given time correctly, the tower released a rainbow candy key.
+        </p>
 
-          <h3 className="text-xl font-semibold text-purple-600">⛰️ Chapter 4: Jellybean Mountain</h3>
-          <p>
-            Jellybean steps went up in sequence: <b>2, 4, 6, 8…</b>
-          </p>
-          <p>👉 Puzzle: If the 5th step is 10, what is the 10th step?</p>
-          <p>✅ Answer: 20!</p>
+        <h3 className="text-xl font-semibold text-purple-600">📜 Game 6: The Word Problem Garden</h3>
+        <p>
+          In a garden of licorice vines, math riddles floated in the air.
+          They had to read <b>word problems</b> carefully and pick the correct answers
+          to unlock the garden gates.
+        </p>
 
-          <h3 className="text-xl font-semibold text-purple-600">🕳️ Chapter 5: The Cookie Cave</h3>
-          <p>
-            Riddle: “I am a number between 10 and 20. I am double 7. What am
-            I?”
-          </p>
-          <p>✅ Answer: 14!</p>
+        <h3 className="text-xl font-semibold text-purple-600">💬 Game 7: The Maths Chat with the Candy King</h3>
+        <p>
+          Finally, in the Candy Castle, the <b>Candy King</b> appeared and started a <b>math chat</b>.
+          He asked them quick calculations. Each correct answer turned the floor tiles into gold.
+          After solving the last question, the king smiled.
+        </p>
 
-          <h3 className="text-xl font-semibold text-purple-600">🏰 Chapter 6: The Candy Castle</h3>
-          <p>
-            The Candy King asked: “I have <b>40 candies</b>. I share them
-            equally among <b>5 children</b>. How many does each get?”
-          </p>
-          <p>✅ Answer: 8 candies each!</p>
-
-          <p className="font-bold text-center text-pink-700">
-            🎉 The Candy King crowned them winners, saying: <br />
-            “Math is the true magic of Candy Island. Every puzzle you solve
-            makes the world sweeter!”
-          </p>
-        </div>
-      </DialogContent>
-    </Dialog>
+        <p className="font-bold text-center text-pink-700">
+          🎉 “You’ve completed all seven magical games!” said the Candy King.
+          “Math is the sweetest magic of all!”  
+          Lila and Max became the official heroes of Candy Island.
+        </p>
+      </div>
+    </div>
   );
 };
 
-export default StoryModal;
+export default CandyStory;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Home, RotateCcw, Star, Clock } from 'lucide-react';
-
+import { useNavigate } from "react-router-dom";
 const PatternDetectiveGame = () => {
   const [gameState, setGameState] = useState('welcome');
   const [currentPattern, setCurrentPattern] = useState<any>(null);
@@ -18,7 +18,7 @@ const PatternDetectiveGame = () => {
   });
   const timerRef = useRef<any>(null);
   const MAX_QUESTIONS = 10;
-
+ const navigate=useNavigate();
   // ✅ Speech function
   const speak = (text: string) => {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -270,7 +270,13 @@ const PatternDetectiveGame = () => {
           startY={10 + (index * 15) % 70}
         />
       ))}
-
+    {/* 🔙 Back to Games button */}
+    <button
+      onClick={() => navigate("/CandyIslandMap")}
+      className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+    >
+      ⬅️ Back to Games
+    </button>
       {/* Twinkling Stars */}
       <div className="absolute inset-0">
         {[...Array(20)].map((_, i) => (
@@ -291,13 +297,7 @@ const PatternDetectiveGame = () => {
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
         {/* Header */}
         <div className="w-full max-w-4xl flex justify-between items-center mb-8">
-          <button
-            onClick={resetGame}
-            className="flex items-center gap-2 text-white bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 hover:bg-white/30 transition-all duration-300"
-          >
-            <Home size={20} />
-            Back to Games
-          </button>
+        
           {gameState === 'playing' && (
             <div className="flex items-center gap-4 text-white bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
               <Clock size={20} />
@@ -418,12 +418,13 @@ const PatternDetectiveGame = () => {
                 >
                   Play Again! 🔄
                 </button>
-                {/* <button
-                  onClick={resetGame}
-                  className="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-500 hover:to-pink-600 text-white text-xl font-bold py-3 px-6 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300"
-                >
-                  Next Game 🎲
-                </button> */}
+                <button
+  onClick={() => navigate("/game/CandyComparison", { state: { from: "PatternChallenge" } })
+            }// Replace "/next-game" with your route
+  className="px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
+>
+  ▶️ Next Game
+</button>
               </div>
             </div>
           )}

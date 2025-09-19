@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import {useNavigate} from 'react-router-dom';
+import CandyComparisonGame from './CandyComparisonGame';
 
 interface GameResultsProps {
   score: number;
@@ -37,6 +39,8 @@ export function GameResults({ score, totalRounds, onPlayAgain }: GameResultsProp
   };
 
   const result = getResultMessage();
+  const navigate=useNavigate();
+
 
   return (
     <Card className="bg-gradient-card backdrop-blur-sm border-2 border-white/30 shadow-magical p-8 text-center max-w-2xl mx-auto">
@@ -75,14 +79,13 @@ export function GameResults({ score, totalRounds, onPlayAgain }: GameResultsProp
           Play Again! 🎮
         </Button>
         
-        <Button 
-        //   variant="magic" 
-          size="lg" 
-          className="text-lg px-8 py-3"
-          onClick={() => window.location.reload()}
-        >
-          Back to Instructions 📚
-        </Button>
+        <button
+  onClick={() => navigate("/game/PatternChallenge", { state: { from: "GameResults" } })
+            }// Replace "/next-game" with your route
+  className="px-6 py-2 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg "
+>
+  ▶️ Next Game
+</button>
       </div>
       
       <div className="mt-8 text-center">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Message {
   text: string;
@@ -24,11 +25,11 @@ const MathChatAdventure: React.FC = () => {
   const [startTime] = useState<number>(Date.now());
   const [timer, setTimer] = useState<string>('00:00');
   const [inputValue, setInputValue] = useState<string>('');
-  const [showCelebration, setShowCelebration] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [showInstructions, setShowInstructions] = useState<boolean>(true);
   const [gameFinished, setGameFinished] = useState<boolean>(false);
 
+  const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const treats: string[] = ['🍪', '🍫', '🍭', '🧁', '🍰', '🍩', '🍬', '🎂', '🥧'];
@@ -57,12 +58,11 @@ const MathChatAdventure: React.FC = () => {
     return () => clearInterval(timerInterval);
   }, [startTime]);
 
-  // Auto scroll to bottom
+  // Auto scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Whenever questionCount changes, ask that question
   useEffect(() => {
     if (gameStarted && questionCount >= 0 && questionCount < questions.length) {
       askQuestion(questionCount);
@@ -72,8 +72,8 @@ const MathChatAdventure: React.FC = () => {
   const speakText = (text: string) => {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}]/gu, '')); // remove emojis
-    utterance.lang = "en-US";
+    const utterance = new SpeechSynthesisUtterance(text.replace(/[\u{1F300}-\u{1FAFF}]/gu, ''));
+    utterance.lang = "en-IN";
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
   };
@@ -93,7 +93,7 @@ const MathChatAdventure: React.FC = () => {
 
   const startGame = () => {
     setShowInstructions(false);
-    setMessages([{ text: "Hi! I'm Priya. Welcome to my sweet shop! 🍬", isUser: false }]);
+    setMessages([{ text: "Hi! I'm Sanket. Welcome to my sweet shop! 🍬", isUser: false }]);
     setTimeout(() => {
       addMessage("Let me ask you some questions about my shop! 🛍️");
       setTimeout(() => {
@@ -115,10 +115,7 @@ const MathChatAdventure: React.FC = () => {
 
     if (userAnswer === currentQuestion.answer) {
       setScore(prev => prev + 1);
-      setShowCelebration(true);
       speakText("Correct! Well done!");
-      setTimeout(() => setShowCelebration(false), 2000);
-
       setTimeout(() => {
         addMessage(`🎉 Excellent! That's correct! ${currentQuestion.calculation}`);
         setTimeout(() => {
@@ -133,7 +130,7 @@ const MathChatAdventure: React.FC = () => {
     } else {
       speakText(`Wrong! The correct answer is ${currentQuestion.answer}`);
       setTimeout(() => {
-        addMessage(`Not quite right! The correct answer is ${currentQuestion.answer}. ${currentQuestion.calculation}. Don't worry, let's try another one! 💪`);
+        addMessage(`❌ Not quite right! The correct answer is ${currentQuestion.answer}. ${currentQuestion.calculation}`);
         setTimeout(() => {
           if (questionCount + 1 < questions.length) {
             setQuestionCount(prev => prev + 1);
@@ -151,7 +148,7 @@ const MathChatAdventure: React.FC = () => {
 
   const FloatingTreat: React.FC<FloatingTreatProps> = ({ treat, style }) => (
     <div
-      className="absolute text-2xl pointer-events-none animate-bounce"
+      className="absolute text-2xl pointer-events-none animate-bounce opacity-60"
       style={{
         ...style,
         animationDuration: `${4 + Math.random() * 4}s`,
@@ -168,11 +165,12 @@ const MathChatAdventure: React.FC = () => {
   if (gameFinished) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none z-10">
+        {/* Floating treats with lower z-index */}
+        <div className="absolute inset-0 pointer-events-none z-0">
           {Array.from({ length: 30 }).map((_, i) => (
             <div
               key={i}
-              className="absolute text-3xl animate-bounce"
+              className="absolute text-3xl animate-bounce opacity-60"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -185,29 +183,49 @@ const MathChatAdventure: React.FC = () => {
           ))}
         </div>
 
-        <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-6">🎉 Game Finished!</h1>
-        <p className="text-xl text-white mb-6">Your final score: <strong>{score}/{questions.length}</strong></p>
-        <p className="text-lg text-white mb-6">
-          {score === questions.length
-            ? "Perfect score! You’re a math star! 🌟"
-            : score >= questions.length / 2
-            ? "Great job! Keep practicing to get even better! 💪"
-            : "Nice try! You can always replay to improve! 😊"}
-        </p>
+        {/* Card wrapper for Results */}
+        <div className="relative z-10 bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-8 max-w-xl w-full">
+          <h1 className="text-5xl font-bold text-purple-700 mb-6">🎉 Game Finished!</h1>
+          <p className="text-xl text-purple-700 mb-6">
+            Your final score: <strong>{score}/{questions.length}</strong>
+          </p>
 
-        <button
-          onClick={() => {
-            setScore(0);
-            setQuestionCount(-1);
-            setGameStarted(false);
-            setGameFinished(false);
-            setShowInstructions(true);
-            setMessages([]);
-          }}
-          className="px-8 py-4 bg-white text-purple-700 rounded-2xl shadow-lg hover:scale-105 transition-transform text-xl font-bold"
-        >
-          🔄 Play Again
-        </button>
+          <div className="w-64 h-4 bg-purple-100 rounded-full overflow-hidden mb-4 mx-auto">
+            <div className="h-full bg-green-400" style={{ width: `${(score/questions.length)*100}%` }}></div>
+          </div>
+
+          <p className="text-lg text-purple-800 mb-6">
+            {score === questions.length
+              ? "Perfect score! You’re a math star! 🌟"
+              : score >= questions.length / 2
+              ? "Great job! Keep practicing to get even better! 💪"
+              : "Nice try! You can always replay to improve! 😊"}
+          </p>
+
+         
+
+          {/* Buttons */}
+          <button
+            onClick={() => {
+              setScore(0);
+              setQuestionCount(-1);
+              setGameStarted(false);
+              setGameFinished(false);
+              setShowInstructions(true);
+              setMessages([]);
+            }}
+            className="px-8 py-3 bg-purple-600 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-xl font-bold"
+          >
+            🔄 Play Again
+          </button>
+
+          <button
+            onClick={() => navigate("/CandyIslandMap", { state: { from: "MathChatAdventure" } })}
+            className="mt-4 ml-2 px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
+          >
+            ▶️ Back to Games
+          </button>
+        </div>
       </div>
     );
   }
@@ -216,6 +234,12 @@ const MathChatAdventure: React.FC = () => {
   if (showInstructions) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 text-center px-5">
+        <button
+          onClick={() => navigate("/CandyIslandMap")}
+          className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+        >
+          ⬅️ Back to Games
+        </button>
         <h1 className="text-5xl font-bold text-white mb-6 drop-shadow-lg">🍭 Math Chat Adventure</h1>
         <p className="text-xl text-white/90 mb-8 max-w-2xl">
           Help at sweet shop by solving fun math problems! Earn points for each correct answer and watch your score grow!
@@ -244,7 +268,7 @@ const MathChatAdventure: React.FC = () => {
   // 🟢 Game Screen
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 relative overflow-hidden font-sans">
-      <div className="absolute inset-0 pointer-events-none z-10">
+      <div className="absolute inset-0 pointer-events-none z-0">
         {Array.from({ length: 20 }).map((_, i) => (
           <FloatingTreat
             key={i}
@@ -274,7 +298,7 @@ const MathChatAdventure: React.FC = () => {
               <div key={index} className={`flex items-start mb-4 animate-fade-in ${message.isUser ? 'justify-end' : ''}`}>
                 {!message.isUser && (
                   <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-xl mr-4 cursor-pointer"
-                       onClick={() => speakText(message.text)}>
+                    onClick={() => speakText(message.text)}>
                     🧁
                   </div>
                 )}
@@ -305,15 +329,6 @@ const MathChatAdventure: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {showCelebration && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-          <div className="bg-white p-8 rounded-3xl shadow-2xl text-center animate-bounce">
-            <h2 className="text-3xl font-bold text-green-600 mb-3">🎉 Excellent!</h2>
-            <p className="text-gray-600 text-lg">That's correct! Well done!</p>
-          </div>
-        </div>
-      )}
 
       <style>{`
         @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

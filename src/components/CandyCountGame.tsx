@@ -6,6 +6,7 @@ import { CandyObject } from './CandyObject';
 import { GameInstructions } from './GameInstructions';
 import { GameResults } from './GameResults';
 import { useToast } from '@/hooks/use-toast';
+import {useNavigate} from 'react-router-dom';
 
 // Import candy images
 import candyImg from '@/assets/candy.png';
@@ -44,6 +45,7 @@ export function CandyCountGame() {
   const [round, setRound] = useState(1);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const { toast } = useToast();
+  const navigate =useNavigate();
 
   // 🔹 Simple helper to speak text aloud
   const speak = (text: string) => {
@@ -139,6 +141,13 @@ export function CandyCountGame() {
 
   return (
     <div className="min-h-screen flex items-center justify-center  bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
+               {/* 🔙 Back to Games button */}
+    <button
+      onClick={() => navigate("/CandyIslandMap")}
+      className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+    >
+      ⬅️ Back to Games
+    </button>
       {floatingCandies.map((candy, index) => (
         <div
           key={index}

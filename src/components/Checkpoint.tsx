@@ -6,6 +6,7 @@ import lollipopIcon from "@/assets/checkpoint-lollipop.jpg";
 import chocolateIcon from "@/assets/checkpoint-chocolate.jpg";
 import clockIcon from "@/assets/checkpoint-clock.jpg";
 import chat from "@/assets/checkpoint-chat1.jpg";
+import story from "@/assets/story.jpg";
 
 interface CheckpointData {
   id: number;
@@ -32,6 +33,7 @@ const checkpointIcons = {
   chocolate: chocolateIcon,
   clock: clockIcon,
   chat:chat,
+  story:story,
 };
 
 export const Checkpoint = ({ checkpoint, isSelected, onClick, size = "normal" }: CheckpointProps) => {

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Star, Trophy, Heart } from "lucide-react";
 import { CandyCountGame } from "./CandyCountGame";
-import ClockGame from "./ClockGame";
 import MathChatAdventure from "./MathChatAdventure";
 import { useNavigate } from "react-router-dom";
 import CandyComparisonGame from "./CandyComparisonGame";
@@ -26,6 +25,7 @@ const checkpoints = [
     stars: 3,
     game: "candyCount",
     locked: false,
+    current: true,
   },
   {
     id: 2,
@@ -52,7 +52,6 @@ const checkpoints = [
     position: { x: 55, y: 38 },
     completed: false,
     stars: 0,
-    current: true,
     game: "SymbolDetectiveGame",
   },
   {
@@ -62,7 +61,6 @@ const checkpoints = [
     position: { x: 68, y: 50 },
     completed: false,
     stars: 2,
-    current: true,
     game: "CandyClock",
   },
   {
@@ -72,7 +70,6 @@ const checkpoints = [
     position: { x: 82, y: 43 },
     completed: false,
     stars: 0,
-    current: true,
     game: "MathsStoryGame",
   },
   {
@@ -82,7 +79,6 @@ const checkpoints = [
     position: { x: 95, y: 52 },
     completed: false,
     stars: 0,
-    current: true,
     game: "MathChatAdventure",
   },
 ];
@@ -96,6 +92,7 @@ const speakName = (text: string) => {
   utterance.pitch = 1;
   window.speechSynthesis.speak(utterance);
 };
+
 
 export const CandyIslandMap = () => {
   const [selectedCheckpoint, setSelectedCheckpoint] = useState<number | null>(
@@ -207,7 +204,7 @@ export const CandyIslandMap = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-rainbow bg-clip-text text-transparent">
-                  Candy Quest Island
+                  Candy  Island
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   Choose your sweet adventure!

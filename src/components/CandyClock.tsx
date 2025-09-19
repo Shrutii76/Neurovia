@@ -2,40 +2,35 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { toast } from 'sonner';
-// import { useNavigate } from "react-router-dom";
-import MathStoryGame from './MathsStoryGame';
-
+import { useNavigate } from "react-router-dom";
 
 interface ClockHandPosition {
   hour: number;
   minute: number;
 }
 
-
-
 const floatingCandies = [
-    { emoji: '🍪', top: '15%', left: '8%', size: 'text-5xl' },
-    { emoji: '🧁', top: '65%', left: '12%', size: 'text-4xl' },
-    { emoji: '🍭', top: '25%', left: '85%', size: 'text-6xl' },
-    { emoji: '🍩', top: '50%', left: '88%', size: 'text-5xl' },
-    { emoji: '🍫', top: '20%', left: '92%', size: 'text-4xl' },
-    { emoji: '🥤', top: '75%', left: '90%', size: 'text-5xl' },
-    { emoji: '🍰', top: '80%', left: '85%', size: 'text-4xl' },
-    { emoji: '✏️', top: '70%', left: '5%', size: 'text-4xl' },
-  ];
+  { emoji: '🍪', top: '15%', left: '8%', size: 'text-5xl' },
+  { emoji: '🧁', top: '65%', left: '12%', size: 'text-4xl' },
+  { emoji: '🍭', top: '25%', left: '85%', size: 'text-6xl' },
+  { emoji: '🍩', top: '50%', left: '88%', size: 'text-5xl' },
+  { emoji: '🍫', top: '20%', left: '92%', size: 'text-4xl' },
+  { emoji: '🥤', top: '75%', left: '90%', size: 'text-5xl' },
+  { emoji: '🍰', top: '80%', left: '85%', size: 'text-4xl' },
+  { emoji: '✏️', top: '70%', left: '5%', size: 'text-4xl' },
+];
 
 export const CandyClock = () => {
   // --- GAME STATE ---
   const [phase, setPhase] = useState<'instructions' | 'playing' | 'results'>('instructions');
-
+  const navigate = useNavigate();
   // --- CLOCK + GAME STATES ---
   const [handPosition, setHandPosition] = useState<ClockHandPosition>({ hour: 12, minute: 0 });
   const [targetTime, setTargetTime] = useState<ClockHandPosition>({ hour: 3, minute: 0 });
   const [isDragging, setIsDragging] = useState<'hour' | 'minute' | null>(null);
   const [round, setRound] = useState(1);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(15); // seconds per round
-  const totalRounds = 10;
+  const totalRounds = 5;
   const clockRef = useRef<HTMLDivElement>(null);
 
   // 🔊 Voice feedback
@@ -55,7 +50,6 @@ export const CandyClock = () => {
         minute: Math.floor(Math.random() * 12) * 5,
       });
       setHandPosition({ hour: 12, minute: 0 });
-      setTimeLeft(15);
     }
   }, [round, phase]);
 
@@ -125,8 +119,16 @@ export const CandyClock = () => {
 
   // --- UI ---
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
-        {floatingCandies.map((candy, index) => (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200 relative">
+      {/* 🔙 Back to Games button */}
+      <button
+        onClick={() => navigate("/CandyIslandMap")}
+        className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+      >
+        ⬅️ Back to Games
+      </button>
+
+      {floatingCandies.map((candy, index) => (
         <div
           key={index}
           className={`absolute ${candy.size} opacity-80 animate-bounce`}
@@ -141,9 +143,7 @@ export const CandyClock = () => {
         </div>
       ))}
 
-       
-      <Card className="candy-card max-w-lg mx-auto p-6">
-        
+      <Card className="candy-card max-w-lg mx-auto p-6 relative z-10">
         {/* INSTRUCTIONS SCREEN */}
         {phase === 'instructions' && (
           <div className="text-center space-y-6">
@@ -151,11 +151,10 @@ export const CandyClock = () => {
             <p className="text-lg text-muted-foreground max-w-md mx-auto">
               Welcome! In this game you’ll get {totalRounds} random times to set on the candy clock.
               Drag the cupcake hand for hours and the lollipop hand for minutes.
-              Try to match the target time before time runs out!
+              Try to match the target time!
             </p>
             <ul className="text-left inline-block text-muted-foreground">
-              <li>✅ 10 rounds</li>
-              <li>✅ 15 seconds each round</li>
+              <li>✅ {totalRounds} rounds</li>
               <li>✅ Earn 1 point for each correct time</li>
               <li>✅ See your results at the end</li>
             </ul><br />
@@ -244,26 +243,74 @@ export const CandyClock = () => {
 
         {/* RESULTS SCREEN */}
         {phase === 'results' && (
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-6 relative">
             <h2 className="text-3xl font-bold text-primary mb-4">🎉 Game Over! 🎉</h2>
             <p className="text-xl text-muted-foreground">
               You scored <span className="text-primary font-bold">{score}</span> out of {totalRounds}!
             </p>
-            <div className="space-y-2">
-              {score === totalRounds && <p>🌟 Perfect! You’re a time master!</p>}
-              {score >= totalRounds / 2 && score < totalRounds && <p>🎯 Great job! Keep practicing!</p>}
-              {score < totalRounds / 2 && <p>🍭 You can do better! Try again.</p>}
-            </div>
-            <Button onClick={() => { setPhase('instructions'); speak("Play again"); }}>
-              Play Again 🔁
-            </Button>
-           {/* <button
-  onClick={() => navigate("/MathStoryGame")} // Replace "/next-game" with your route
-  className="px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
->
-  ▶️ Next Game
-</button> */}
 
+            {/* Stars */}
+            <div className="flex justify-center mb-4">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const filledStars = Math.round((score / totalRounds) * 5);
+                return (
+                  <span key={i} className="text-3xl">
+                    {i < filledStars ? '⭐' : '⚪'}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Performance Emoji */}
+            <p className="text-5xl mb-2">
+              {score === totalRounds
+                ? '🤩'
+                : score >= totalRounds * 0.7
+                ? '😃'
+                : score >= totalRounds * 0.4
+                ? '🙂'
+                : '😅'}
+            </p>
+
+            {/* Reaction Text */}
+            <div className="space-y-2 text-lg">
+              {score === totalRounds && <p>🌟 Perfect! You’re a Time Master!</p>}
+              {score >= totalRounds / 2 && score < totalRounds && <p>🎯 Great job! Keep practicing your clock skills!</p>}
+              {score < totalRounds / 2 && <p>🍭 You can do better! Try again to improve.</p>}
+            </div>
+
+            {/* Bar Chart */}
+            <div className="mb-6 w-3/4 mx-auto">
+              <div className="w-full bg-gray-200 h-6 rounded-full overflow-hidden">
+                <div
+                  className="bg-green-400 h-full"
+                  style={{
+                    width: `${(score / totalRounds) * 100}%`,
+                  }}
+                ></div>
+              </div>
+              <p className="mt-2 text-sm">
+                ✅ Correct: {score} | ❌ Incorrect: {totalRounds - score}
+              </p>
+            </div>
+
+          
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center gap-4 relative">
+              <Button onClick={() => { setPhase('instructions'); speak("Play again"); }} className="px-6 py-6">
+                Play Again 🔁
+              </Button>
+
+              <button
+                onClick={() =>
+                  navigate("/game/MathsStory", { state: { from: "CandyClock" } })
+                }
+                className="px-6 py-2 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg "
+              >
+                ▶️ Next Game
+              </button>
+            </div>
           </div>
         )}
       </Card>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const SymbolDetectiveGame = () => {
   const [gameState, setGameState] = useState('intro'); // 'intro', 'playing', 'results'
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
-
+  const navigate=useNavigate();
   // 🔊 Feedback variations
   const positiveFeedback = ["Excellent!", "Great job!", "Awesome!", "Well done!", "You’re amazing!"];
   const negativeFeedback = ["Try again!", "Oops, not quite!", "Keep trying!", "Almost there!"];
@@ -119,6 +119,13 @@ const SymbolDetectiveGame = () => {
   if (gameState === 'intro') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 overflow-hidden relative">
+                 {/* 🔙 Back to Games button */}
+    <button
+      onClick={() => navigate("/CandyIslandMap")}
+      className="absolute top-5 left-5 bg-white text-purple-700 px-5 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold z-50"
+    >
+      ⬅️ Back to Games
+    </button>
         {floatingTreats.map((treat, index) => (
           <div key={index} className="absolute text-4xl floating-treat" style={{ top: treat.top, left: treat.left, right: treat.right, animationDelay: treat.delay }}>{treat.emoji}</div>
         ))}
@@ -172,9 +179,17 @@ const SymbolDetectiveGame = () => {
                    "Good start, detective! Practice makes perfect! 💪🔍"}
                 </p>
               </div>
-              <button onClick={resetGame} className="bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold py-4 px-8 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg w-full">
+              <button onClick={resetGame} className="bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold py-3 px-4 rounded-2xl transform hover:scale-105 transition-all duration-200 shadow-lg ">
                 Play Again! 🔄
               </button>
+&nbsp;&nbsp;
+                 <button
+  onClick={() => navigate("/game/CandyClock", { state: { from: "SymbolDetectiveGame" } })
+            }// Replace "/next-game" with your route
+  className="px-6 py-3 bg-green-500 text-white rounded-2xl shadow-lg hover:scale-105 transition-transform text-lg font-bold"
+>
+  ▶️ Next Game
+</button>
             </div>
           </div>
         </div>
@@ -190,7 +205,7 @@ const SymbolDetectiveGame = () => {
       ))}
       <div className="relative z-10 p-4">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={resetGame} className="text-white text-lg hover:text-yellow-200 transition-colors duration-200">← Back to Games</button>
+         
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white">Symbol Detective</h1>
             <p className="text-white/80">Age Group: 10-15 years 🎯</p>
