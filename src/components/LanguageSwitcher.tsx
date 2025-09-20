@@ -1,9 +1,7 @@
-// src/components/LanguageSwitcher.tsx
 import React, { ChangeEvent } from 'react';
 import i18n from 'i18next';
 
 const LanguageSwitcher: React.FC = () => {
-  // Type the event
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     i18n.changeLanguage(e.target.value);
   };

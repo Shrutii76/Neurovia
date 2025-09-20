@@ -5,7 +5,6 @@
     "startButton": "🍭 Start Adventure",
     "readStoryButton": "📖 Read Story"
   },
-
   "game": {
     "instructions": {
       "title": "Quick Count Challenge",
@@ -44,6 +43,24 @@
       "thanks": "Thanks for playing in our magical Candy Land! ✨",
       "playAgain": "Play Again! 🎮",
       "nextGame": "▶️ Next Game"
+    }
+  },
+  "pattern": {
+    "title": "Pattern Detective",
+    "ageGroup": "Age Group: 6-12 years 🎨",
+    "howToPlay": "How to Play",
+    "step1": "Look at the sequence carefully.",
+    "step2": "Find the missing piece in the pattern.",
+    "step3": "Choose the correct answer from the options.",
+    "start": "Start Game 🎮",
+    "complete": "Complete the Pattern! 🧩",
+    "correct": "Correct! 🎉",
+    "wrong": "Oops! Try again! ❌",
+    "score": "Score",
+    "results": {
+      "title": "Game Complete! 🎊",
+      "score": "Your Score: {{score}}",
+      "playAgain": "Play Again"
     }
   }
 }

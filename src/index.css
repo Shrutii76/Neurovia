@@ -252,3 +252,7 @@ body {
   background-size: cover;
   
 }
+
+.animated-title {
+  word-spacing: 10px; /* Adjust the gap between words */
+}
