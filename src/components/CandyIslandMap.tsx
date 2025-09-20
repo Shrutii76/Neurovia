@@ -96,7 +96,7 @@ const speakName = (text: string) => {
 
 
   let goToPage = () => {
-    window.location.href = "https://localhost:8080"; // your link
+    window.location.href = "http://localhost:8080"; // your link
   };
 
 
