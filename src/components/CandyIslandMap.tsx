@@ -13,6 +13,7 @@ import SymbolDetectiveGame from "./SymbolDetectiveGame";
 import MathStoryGame from "./MathsStoryGame";
 import { CandyClock } from "./CandyClock";
 import PatternChallenge from "./PatternChallenge";
+import React from "react";
 
 // ✅ Keep only checkpoints and speakName outside
 const checkpoints = [
@@ -94,6 +95,11 @@ const speakName = (text: string) => {
 };
 
 
+  let goToPage = () => {
+    window.location.href = "https://localhost:8080"; // your link
+  };
+
+
 export const CandyIslandMap = () => {
   const [selectedCheckpoint, setSelectedCheckpoint] = useState<number | null>(
     null
@@ -170,11 +176,23 @@ export const CandyIslandMap = () => {
       id="CandyIslandMap"
       className="min-h-screen bg-gradient-island overflow-hidden relative"
     >
+        <button
+      onClick={goToPage}
+      className="fixed top-5 right-5 z-100 bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg text-2xl transition"
+    >
+      ⬅️
+    </button>
+
+
+      
       {/* Background Island */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"
         style={{ backgroundImage: `url(${candyIslandBg})` }}
       />
+
+
+
 
       {/* Floating candy decorations */}
       <div className="absolute top-10 left-10 text-6xl float">🍭</div>
@@ -210,6 +228,12 @@ export const CandyIslandMap = () => {
                   Choose your sweet adventure!
                 </p>
               </div>
+              <button
+      onClick={goToPage}
+      className="fixed top-5 left-10 z-100 bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg text-2xl transition"
+    >
+      ⬅️
+    </button>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1 text-candy-sunshine">
                   <Star className="w-5 h-5 fill-current" />

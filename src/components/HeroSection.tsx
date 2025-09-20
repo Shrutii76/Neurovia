@@ -16,11 +16,11 @@ const HeroSection = () => {
 
   // Play welcome voice when component loads
   useEffect(() => {
-    speakIndianCartoon(t("hero.welcomeVoice"));
-  }, [t]);
+    speakIndianCartoon(t("Welcome to candy island! Start your adventure ."));
+  },);
 
   const handleStartAdventure = () => {
-    speakIndianCartoon(t("hero.startVoice"));
+    speakIndianCartoon(t("Let's begin our adventure!"));
 
     // Delay navigation so audio can play
     setTimeout(() => navigate("/CandyIslandMap"), 1500);
